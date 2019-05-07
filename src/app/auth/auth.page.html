@@ -1,0 +1,118 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ isLogin ? 'Welcome' : 'Create Account' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+  <div class="is-flex is-container is-column">
+    <div class="is-flex-grow-four margin-md">
+      <div class="is-flex is-container is-column">
+        <form #f="ngForm" (ngSubmit)="onSubmit(f)">
+          <div class="is-flex is-flex-grow-one is-column is-flex-end">
+            <ion-item>
+              <ion-label position="floating">E-Mail</ion-label>
+              <ion-input
+                type="email"
+                ngModel
+                name="email"
+                required
+                email
+                #emailCtrl="ngModel"
+                ></ion-input>
+            </ion-item>
+            <ion-item
+              *ngIf="!emailCtrl.valid && emailCtrl.touched"
+              lines="none"
+            >
+            <ion-label>
+              Should be a valid email address.
+            </ion-label> 
+            </ion-item>
+            <ion-item>
+              <ion-label position="floating">Password</ion-label>
+              <ion-input 
+                type="password"
+                ngModel
+                name="password"
+                required
+                minlength="6"
+                #passwordCtrl="ngModel"
+              ></ion-input>
+            </ion-item>
+            <ion-item
+              *ngIf="!passwordCtrl.valid && passwordCtrl.touched"
+              lines="none"
+            >
+            <ion-label>
+              Should at least be 6 characters long.
+            </ion-label>
+            </ion-item>
+          </div>
+          <div class="is-flex-grow-one margin-md is-column is-flex is-flex-center">
+            <ion-button 
+              color="primary" 
+              size="large" 
+              expand="full"
+              [disabled]="!f.valid"
+              type="submit"
+              >
+              {{ isLogin ? 'Login' : 'Register'}}
+            </ion-button>
+          </div>
+          <div class="is-flex-grow-one margin-md is-flex is-column is-flex-between is-aligned-items-to-center ">
+            <ion-button 
+              type="button" 
+              color="primary" 
+              fill="outline" 
+              expand="block" 
+              (click)="onSwitchAuthMode(f)"
+              >
+              {{ isLogin ? 'Create an account' : 'Back to Login'}}
+            </ion-button>                
+          </div>
+        </form>
+      </div>
+    </div>    
+    <div *ngIf="isLogin" class="is-flex-grow-one">
+      <ion-grid>
+        <ion-row>
+          <ion-col size="5">
+            <hr class="is-color-medium add-width-to-full">
+          </ion-col>
+          <ion-col size="2">
+            <div class="is-flex is-container is-aligned-items-to-center is-column">
+              <ion-text color="medium">OR</ion-text>
+            </div>
+          </ion-col>
+          <ion-col size="5">
+            <hr class="is-color-medium add-width-to-full">
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <div class="is-flex is-container is-aligned-items-to-center is-column">
+              <ion-text color="dark">Continue with</ion-text>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+      
+      <div class="padding-md margin-md">
+        <ion-button color="gplus" size="large" expand="full" (click)="googleLogin()">
+          <ion-icon name="logo-googleplus" slot="start"></ion-icon>
+          Login with Google
+        </ion-button>
+      
+        <ion-button color="fb" size="large" expand="full" (click)="facebookLogin()">
+          <ion-icon name="logo-facebook" slot="start"></ion-icon>
+          Login with Facebook
+        </ion-button>
+      </div>
+    </div>
+  </div>
+</ion-content>
+
+<ion-footer>
+
+</ion-footer>

@@ -1,6 +1,9 @@
 {
   "name": "eventApp",
-  "integrations": {},
+  "integrations": {
+    "cordova": {},
+    "capacitor": {}
+  },
   "type": "angular",
   "id": "2986f796"
 }

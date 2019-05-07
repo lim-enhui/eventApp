@@ -1,0 +1,82 @@
+.ion-color-gplus {
+    --ion-color-base: var(--ion-color-gplus) !important;
+    --ion-color-base-rgb: var(--ion-color-gplus-rgb) !important;
+    --ion-color-contrast: var(--ion-color-gplus-contrast) !important;
+    --ion-color-contrast-rgb: var(--ion-color-gplus-contrast-rgb) !important;
+    --ion-color-shade: var(--ion-color-gplus-shade) !important;
+    --ion-color-tint: var(--ion-color-gplus-tint) !important;
+}
+
+.ion-color-fb {
+    --ion-color-base: var(--ion-color-fb) !important;
+    --ion-color-base-rgb: var(--ion-color-fb-rgb) !important;
+    --ion-color-contrast: var(--ion-color-fb-contrast) !important;
+    --ion-color-contrast-rgb: var(--ion-color-fb-contrast-rgb) !important;
+    --ion-color-shade: var(--ion-color-fb-shade) !important;
+    --ion-color-tint: var(--ion-color-fb-tint) !important;
+}
+
+.is-text-center {
+    text-align: center;
+}
+
+.is-flex {
+    display: flex;
+}
+
+.is-flex-end {
+    justify-content: flex-end;
+}
+
+.is-flex-start {
+    justify-content: flex-start;
+}
+
+.is-aligned-items-to-center {
+    align-items: center;
+}
+
+.is-flex-center {
+    justify-content: center;
+}
+
+.is-flex-between {
+    justify-content: space-between;
+}
+
+.is-container {
+    height: 100%;
+    width: 100%;
+}
+
+.is-column {
+    flex-direction: column;
+}
+
+.is-column-reverse {
+    flex-direction: column-reverse;
+}
+
+.is-flex-grow-one {
+    flex-grow: 1;
+}
+
+.is-flex-grow-four {
+    flex-grow: 4;
+}
+
+.padding-md {
+    padding: 8px;
+}
+
+.margin-md {
+    margin:8px;
+}
+
+.is-color-medium {
+    background-color: #989aa2;
+}
+
+.add-width-to-full {
+    width: 100%;
+}
