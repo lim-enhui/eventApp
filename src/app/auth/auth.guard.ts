@@ -4,6 +4,7 @@ import { Observable, of } from 'rxjs';
 import { take, tap, switchMap } from 'rxjs/operators';
 
 import { AuthService } from './auth.service';
+import { getAllRouteGuards } from '@angular/router/src/utils/preactivation';
 
 @Injectable({
   providedIn: 'root'

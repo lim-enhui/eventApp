@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { Platform } from '@ionic/angular';
 import { NgForm } from '@angular/forms';
 import { AuthService } from './auth.service';
+import { Router } from '@angular/router';
 
 
 
@@ -20,25 +21,27 @@ export class AuthPage implements OnInit {
   isLoading = false;
 
   constructor(private platform: Platform,
+              private router: Router,
               private authService: AuthService) {}
 
   ngOnInit() {
   }
 
   authenticate(email: string, password:string) {
+    let authObs: Observable<object>;
+
     if (this.isLogin) {
-      this.authService.login(email, password).then((data) => {
-        console.log(data);
-      }, (err) => {
-        console.log(err);
-      });
+      authObs  = this.authService.login(email, password)
     } else {
-      this.authService.signup(email, password).then((data) => {
-        console.log(data);
-      }, (err) => {
-        console.log(err);
-      });
+      authObs = this.authService.signup(email, password)
     }
+
+    authObs.subscribe(res => {
+      this.router.navigateByUrl('/tabs/home');
+    },
+    err => {
+      console.log(err);
+    })
   }
 
   onSubmit(form: NgForm) {
@@ -59,31 +62,24 @@ export class AuthPage implements OnInit {
 
   googleLogin() {
     if (this.platform.is('cordova')) {
-      this.authService.nativeGoogleLogin().then((data) => {
-        console.log(data);
-      }, (err) => {
-        console.debug(err);
-      })
-    }
-  }
-
-  async facebookLogin() {
-    if (this.platform.is('cordova')) {
-      this.authService.nativeFacebookLogin().then((data) => {
-        console.log(data);
-      }, (err) => {
-        console.debug(err);
+      this.authService.nativeGoogleLogin()
+      .then((res) => {
+        console.log(res);
+        this.authService.setUserData(res);
+        this.router.navigateByUrl('/home');
       });
     }
   }
 
-
-
-  // signOut() {
-  //   this.afAuth.auth.signOut();
-  //   if (this.platform.is('cordova')) {
-  //     this.gplus.logout();
-  //   }
-  // }
+  facebookLogin() {
+    if (this.platform.is('cordova')) {
+      this.authService.nativeFacebookLogin()
+      .then(res => {
+        console.log(res);
+        this.authService.setUserData(res);
+        this.router.navigateByUrl('/home');
+      });
+    }
+  }
 
 }

@@ -1,8 +1,13 @@
-export interface User {
-  displayName: string | null;
-  email: string | null;
-  phoneNumber: string | null;
-  photoURL: string | null;
-  uid: string;
-  refreshToken: string;
+export class User {
+    constructor(public id: string, public email: string, private _token: string, private tokenExpirationDate) {
+
+    }
+
+    get token() {
+        if(!this.tokenExpirationDate || this.tokenExpirationDate <= new Date()) {
+            return null;
+        }
+
+        return this._token;
+    }
 }
