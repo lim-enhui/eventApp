@@ -66,7 +66,7 @@ export class AuthPage implements OnInit {
       .then((res) => {
         console.log(res);
         this.authService.setUserData(res);
-        this.router.navigateByUrl('/home');
+        this.router.navigateByUrl('/tabs/home');
       });
     }
   }
@@ -77,7 +77,7 @@ export class AuthPage implements OnInit {
       .then(res => {
         console.log(res);
         this.authService.setUserData(res);
-        this.router.navigateByUrl('/home');
+        this.router.navigateByUrl('/tabs/home');
       });
     }
   }

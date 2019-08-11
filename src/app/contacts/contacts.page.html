@@ -1,0 +1,44 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon slot="icon-only" name="add"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>
+      My Contacts
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-virtual-scroll
+    [items]="contacts"
+    approxItemHeight="70px"
+    [headerFn]="seperateLetter"
+  >
+    <ion-item-divider *virtualHeader="let header">
+      <ion-label>{{ header }}</ion-label>
+    </ion-item-divider>
+
+    <ion-item *virtualItem="let contact">
+      <ion-avatar slot="start">
+        <ion-img [src]="contact.picture.medium"></ion-img>
+      </ion-avatar>
+      <ion-label>
+        <h2 text-capitalize>
+          {{ contact.name?.first }} {{ contact.name?.last }}
+        </h2>
+        <p>{{ contact.email }}</p>
+      </ion-label>
+      <ion-icon
+        name="call"
+        slot="end"
+        (click)="callContact(contact.cell)"
+      ></ion-icon>
+    </ion-item>
+  </ion-virtual-scroll>
+</ion-content>

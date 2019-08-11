@@ -89,3 +89,28 @@
   --ion-color-fb-shade: #3d5fa4;
   --ion-color-fb-tint: #4b71bc;
 }
+
+html.cameraView {
+  background: transparent none;
+
+  body,
+  ion-app,
+  .modal-wrapper,
+  .ion-page {
+    background: transparent none;
+  }
+
+  // ion-content {
+  //   --background: var(--ion-background-color, transparent);
+  // }
+
+  ion-page {
+    // visibility: hidden;
+    --background: var(--ion-background-color, transparent);
+  }
+
+  app-root {
+    // visibility: hidden;
+    --background: var(--ion-background-color, transparent);
+  }
+}

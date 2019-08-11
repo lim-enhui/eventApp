@@ -1,0 +1,26 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div
+    class="is-flex is-column is-justify-content-center is-align-items-center"
+  >
+    <qrcode
+      class="ion-margin-top"
+      [qrdata]="'Your QR code data string'"
+      [size]="128"
+      [level]="'M'"
+      [usesvg]="true"
+    ></qrcode>
+    <h5 class="ion-margin-top">
+      Exchange contact has never been easier. 😃
+    </h5>
+  </div>
+</ion-content>

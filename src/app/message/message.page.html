@@ -1,0 +1,37 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div *ngFor="let list of messages">
+    <div class="is-flex" [class]="list.user === 'me' ? 'ion-text-end' : ''">
+      <p class="chat-title">
+        {{ list.user }}
+      </p>
+      <p [class]="list.user === 'me' ? 'chat-message-me' : 'chat-message'">
+        {{ list.message }}
+      </p>
+    </div>
+  </div>
+</ion-content>
+
+<ion-footer>
+  <div class="is-flex is-space-between is-align-center">
+    <ion-textarea
+      #chat_input
+      placeholder="Enter your message"
+      [(ngModel)]="editorMsg"
+      (keyup.enter)="sendMsg()"
+      (focusin)="onFocus()"
+      class="chat-input"
+    >
+    </ion-textarea>
+    <ion-button icon (click)="sendMsg()" class="ion-text-end">
+      <ion-icon name="send" slot="icon-only"></ion-icon>
+    </ion-button>
+  </div>
+</ion-footer>
