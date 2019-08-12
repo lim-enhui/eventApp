@@ -7,8 +7,108 @@
       <ion-button>
         <ion-icon slot="icon-only" name="pin"></ion-icon>
       </ion-button>
+      <ion-button (click)="toggleRightMenu()">
+        <ion-icon slot="icon-only" name="funnel"></ion-icon>
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content></ion-content>
+<ion-menu
+  side="end"
+  type="overlay"
+  menuId="sub"
+  contentId="home-content"
+  #sidemenu
+>
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>Filter</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content>
+    <ion-list>
+      <ion-radio-group>
+        <ion-list-header>
+          <ion-label>Event Occurances</ion-label>
+        </ion-list-header>
+
+        <ion-item>
+          <ion-label>Upcoming All</ion-label>
+          <ion-radio slot="start" value="biff" checked></ion-radio>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>Weekly</ion-label>
+          <ion-radio slot="start" value="griff"></ion-radio>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>Today</ion-label>
+          <ion-radio slot="start" value="buford"></ion-radio>
+        </ion-item>
+      </ion-radio-group>
+    </ion-list>
+  </ion-content>
+</ion-menu>
+
+<ion-content id="home-content">
+  <ion-card>
+    <img src="assets/img/nin-live.png" />
+    <ion-card-content>
+      <ion-card-title>
+        Singing Club
+      </ion-card-title>
+      <ion-card-subtitle>
+        Every Tuesday, 7pm - 9pm
+      </ion-card-subtitle>
+      <p class="ion-padding-top">
+        The most popular industrial group ever, and largely responsible for
+        bringing the music to a mass audience.
+      </p>
+    </ion-card-content>
+    <ion-row>
+      <ion-col>
+        <ion-button fill="clear">
+          <ion-icon slot="start" name="thumbs-up"></ion-icon>
+          <div>12 Likes</div>
+        </ion-button>
+      </ion-col>
+      <ion-col>
+        <ion-button fill="clear">
+          <ion-icon slot="start" name="paper"></ion-icon>
+          <div>Find out more</div>
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-card>
+  <ion-card>
+    <img src="assets/img/nin-live.png" />
+    <ion-card-content>
+      <ion-card-title>
+        Singing Club
+      </ion-card-title>
+      <ion-card-subtitle>
+        Every Tuesday, 7pm - 9pm
+      </ion-card-subtitle>
+      <p class="ion-padding-top">
+        The most popular industrial group ever, and largely responsible for
+        bringing the music to a mass audience.
+      </p>
+    </ion-card-content>
+    <ion-row>
+      <ion-col>
+        <ion-button fill="clear">
+          <ion-icon slot="start" name="thumbs-up"></ion-icon>
+          <div>12 Likes</div>
+        </ion-button>
+      </ion-col>
+      <ion-col>
+        <ion-button fill="clear">
+          <ion-icon slot="start" name="paper"></ion-icon>
+          <div>Find out more</div>
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-card>
+</ion-content>
