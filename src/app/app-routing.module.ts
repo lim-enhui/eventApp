@@ -18,7 +18,9 @@ const routes: Routes = [
   {
     path: "message",
     loadChildren: "./message/message.module#MessagePageModule"
-  }
+  },
+  { path: 'teleport', loadChildren: './teleport/teleport.module#TeleportPageModule' },
+  { path: 'select-contact-to-message', loadChildren: './select-contact-to-message/select-contact-to-message.module#SelectContactToMessagePageModule' }
 ];
 
 @NgModule({

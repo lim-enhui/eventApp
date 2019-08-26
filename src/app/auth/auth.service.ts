@@ -9,12 +9,26 @@ import { GooglePlus } from "@ionic-native/google-plus/ngx";
 import { Facebook } from "@ionic-native/facebook/ngx";
 import { User } from "./user.model";
 
+import {
+  AngularFirestore,
+  AngularFirestoreDocument
+} from "@angular/fire/firestore";
+
+export interface IUser {
+  uid: string;
+  displayName: string;
+  photoUrl?: string;
+  email: string;
+  isSearchable: boolean;
+  phoneNumber?: number | null | string;
+}
+
 @Injectable({
   providedIn: "root"
 })
 export class AuthService {
   private _user = new BehaviorSubject<User>(null);
-
+  private userDoc: AngularFirestoreDocument<IUser>;
   get userIsAuthenticated() {
     return this._user.asObservable().pipe(
       map(user => {
@@ -42,7 +56,8 @@ export class AuthService {
   constructor(
     private afAuth: AngularFireAuth,
     private gplus: GooglePlus,
-    private fb: Facebook
+    private fb: Facebook,
+    private afs: AngularFirestore
   ) {}
 
   async nativeFacebookLogin() {
@@ -97,10 +112,39 @@ export class AuthService {
     Plugins.Storage.remove({ key: "authData" });
   }
 
-  setUserData(userData) {
+  setUserData(userData, loginMethod = "default") {
+    this.userDoc = this.afs.doc<IUser>(`users/${userData.user.uid}`);
     const expirationTime = new Date(new Date().getTime() + 3600 * 1000);
+
+    console.log("userData");
     console.log(userData);
+
+    this.afs.firestore
+      .doc(`/users/${userData.user.uid}`)
+      .get()
+      .then(docSnapshot => {
+        if (!docSnapshot.exists) {
+          this.userDoc.set({
+            uid: userData.user.uid,
+            displayName: userData.user.displayName,
+            photoUrl: userData.user.photoURL ? userData.user.photoURL : "",
+            email: userData.user.email,
+            isSearchable: true,
+            phoneNumber: userData.user.phoneNumber
+          });
+        } else {
+          if (loginMethod == "google" || loginMethod == "facebook") {
+            this.userDoc.update({
+              displayName: userData.user.displayName,
+              photoUrl: userData.user.photoURL,
+              email: userData.user.email
+            });
+          }
+        }
+      });
+
     userData.user.getIdToken().then(idToken => {
+      console.log(userData.user);
       this._user.next(
         new User(
           userData.user.uid,
@@ -109,6 +153,7 @@ export class AuthService {
           expirationTime
         )
       );
+
       this.storeAuthData(
         userData.user.uid,
         idToken,

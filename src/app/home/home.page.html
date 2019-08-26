@@ -4,7 +4,7 @@
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-buttons slot="end">
-      <ion-button>
+      <ion-button (click)="navigatePush('teleport')">
         <ion-icon slot="icon-only" name="pin"></ion-icon>
       </ion-button>
       <ion-button (click)="toggleRightMenu()">
@@ -28,26 +28,56 @@
   </ion-header>
   <ion-content>
     <ion-list>
-      <ion-radio-group>
+      <ion-radio-group (ionChange)="radioGroupChange($event)">
         <ion-list-header>
           <ion-label>Event Occurances</ion-label>
         </ion-list-header>
 
-        <ion-item>
+        <ion-item (ionSelect)="radioSelect($event)">
           <ion-label>Upcoming All</ion-label>
-          <ion-radio slot="start" value="biff" checked></ion-radio>
+          <ion-radio
+            name="eventDateTimePreference"
+            value="all"
+            slot="start"
+            checked
+          ></ion-radio>
         </ion-item>
 
-        <ion-item>
+        <ion-item (ionSelect)="radioSelect($event)">
           <ion-label>Weekly</ion-label>
-          <ion-radio slot="start" value="griff"></ion-radio>
+          <ion-radio
+            name="eventDateTimePreference"
+            value="weekly"
+            slot="start"
+          ></ion-radio>
         </ion-item>
 
-        <ion-item>
+        <ion-item (ionSelect)="radioSelect($event)">
           <ion-label>Today</ion-label>
-          <ion-radio slot="start" value="buford"></ion-radio>
+          <ion-radio
+            name="eventDateTimePreference"
+            value="today"
+            slot="start"
+          ></ion-radio>
         </ion-item>
       </ion-radio-group>
+    </ion-list>
+    <ion-list>
+      <ion-list-header>
+        <ion-label>Distance</ion-label>
+      </ion-list-header>
+      <ion-item>
+        <ion-range
+          min="2"
+          max="10"
+          step="2"
+          [(ngModel)]="distance"
+          (ionChange)="onDistanceChange($event)"
+        >
+          <ion-icon size="small" slot="start" name="locate"></ion-icon>
+          <ion-icon slot="end" name="locate"></ion-icon>
+        </ion-range>
+      </ion-item>
     </ion-list>
   </ion-content>
 </ion-menu>

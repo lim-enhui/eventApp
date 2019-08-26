@@ -5,6 +5,7 @@ import { RouteReuseStrategy } from "@angular/router";
 import { AngularFireModule } from "@angular/fire";
 import { AngularFireAuthModule } from "@angular/fire/auth";
 import { AngularFireStorageModule } from "@angular/fire/storage";
+import { AngularFirestoreModule } from "@angular/fire/firestore";
 
 import { Facebook } from "@ionic-native/facebook/ngx";
 
@@ -17,6 +18,7 @@ import { CallNumber } from "@ionic-native/call-number/ngx";
 import { FileOpener } from "@ionic-native/file-opener/ngx";
 import { FileTransfer } from "@ionic-native/file-transfer/ngx";
 import { File } from "@ionic-native/file/ngx";
+import { Geolocation } from "@ionic-native/geolocation/ngx";
 
 import { AppComponent } from "./app.component";
 import { AppRoutingModule } from "./app-routing.module";
@@ -41,6 +43,7 @@ const firebaseConfig = {
     AppRoutingModule,
     AngularFireModule.initializeApp(firebaseConfig),
     AngularFireAuthModule,
+    AngularFirestoreModule,
     AngularFireStorageModule
   ],
   providers: [
@@ -53,6 +56,7 @@ const firebaseConfig = {
     FileTransfer,
     File,
     CallNumber,
+    Geolocation,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

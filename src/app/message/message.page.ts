@@ -35,4 +35,6 @@ export class MessagePage implements OnInit {
       this.messages = response;
     });
   }
+
+  
 }
