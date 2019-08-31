@@ -23,6 +23,14 @@ import { Geolocation } from "@ionic-native/geolocation/ngx";
 import { AppComponent } from "./app.component";
 import { AppRoutingModule } from "./app-routing.module";
 import { HttpClientModule } from "@angular/common/http";
+import { GeolocationService } from "./shared/geolocation.service";
+
+import { StoreModule } from "@ngrx/store";
+import { EffectsModule } from "@ngrx/effects";
+import { StoreDevtoolsModule } from "@ngrx/store-devtools";
+
+import * as fromAppReducer from "./store/app.reducer";
+import { AppEffect } from "./store/app.effects";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDX878vWfnXaGwPKAM_WJ_BgWnwhIv3v20",
@@ -38,6 +46,9 @@ const firebaseConfig = {
   entryComponents: [],
   imports: [
     BrowserModule,
+    StoreModule.forRoot({ app: fromAppReducer.appReducer }),
+    StoreDevtoolsModule.instrument(),
+    EffectsModule.forRoot([AppEffect]),
     IonicModule.forRoot(),
     HttpClientModule,
     AppRoutingModule,
@@ -48,6 +59,7 @@ const firebaseConfig = {
   ],
   providers: [
     StatusBar,
+    GeolocationService,
     SplashScreen,
     GooglePlus,
     QRScanner,

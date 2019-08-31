@@ -8,6 +8,8 @@ import { IonicModule } from "@ionic/angular";
 
 import { TeleportPage } from "./teleport.page";
 
+import { GeolocationService } from "../shared/geolocation.service";
+
 const routes: Routes = [
   {
     path: "",
@@ -25,6 +27,7 @@ const routes: Routes = [
     }),
     RouterModule.forChild(routes)
   ],
+  providers: [GeolocationService],
   declarations: [TeleportPage]
 })
 export class TeleportPageModule {}

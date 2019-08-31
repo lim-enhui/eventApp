@@ -1,8 +1,10 @@
 import { Component, OnInit } from "@angular/core";
 import { MenuController, NavController } from "@ionic/angular";
 
-import { Geolocation } from "@ionic-native/geolocation/ngx";
 import { Router } from "@angular/router";
+import { Store, select } from "@ngrx/store";
+import * as fromAppReducer from "../store/app.reducer";
+import { Observable } from "rxjs";
 
 @Component({
   selector: "app-home",
@@ -10,34 +12,26 @@ import { Router } from "@angular/router";
   styleUrls: ["home.page.scss"]
 })
 export class HomePage implements OnInit {
-  private status: number;
   public distance: number = 5;
   public eventDateTimePreference: string = "All";
 
+  public latitude: number;
+  public longitude: number;
+  public geolocation$: Observable<any>;
+
   constructor(
     public menuController: MenuController,
-    private geolocation: Geolocation,
     private router: Router,
+    private store: Store<any>,
     private navController: NavController
   ) {}
 
   ngOnInit() {
     console.log("ngOnInit Home");
-
-    this.status = 1;
-
-    this.geolocation
-      .getCurrentPosition()
-      .then(resp => {
-        // resp.coords.latitude
-        // resp.coords.longitude
-        console.log("ngOnInit Gelocation");
-        console.log(resp.coords.latitude);
-        console.log(resp.coords.longitude);
-      })
-      .catch(error => {
-        console.log("Error getting location", error);
-      });
+    this.geolocation$ = this.store.pipe(
+      select(fromAppReducer.selectGeolocation)
+    );
+    this.geolocation$.subscribe(console.log);
   }
 
   onDistanceChange(event) {
