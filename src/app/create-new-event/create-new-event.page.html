@@ -1,0 +1,42 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+  <form [formGroup]="createEventForm" (ngSubmit)="onSubmit()">
+    <ion-item>
+      <ion-label position="floating">Event Name</ion-label>
+      <ion-input
+        type="text"
+        placeholder="Enter Event Name"
+        id="eventname"
+        formControlName="eventname"
+      ></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Select Event Date</ion-label>
+      <div>
+        <ion-icon
+          size="large"
+          class="input-icon"
+          name="calendar"
+          slot="end"
+        ></ion-icon>
+        <ion-input
+          placeholder="Enter Input"
+          readonly
+          formControlName="eventdate"
+          [liIonic4Datepicker]="datePickerConfig"
+        ></ion-input>
+      </div>
+    </ion-item>
+
+    <ion-button type="submit">
+      Click me
+    </ion-button>
+  </form>
+</ion-content>

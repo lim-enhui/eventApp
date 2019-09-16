@@ -27,4 +27,8 @@ export class MessagesPage implements OnInit {
     console.log("Open Message");
     this.navCtrl.navigateForward("/message");
   }
+
+  navigateTo(url) {
+    this.navCtrl.navigateForward("/" + url);
+  }
 }

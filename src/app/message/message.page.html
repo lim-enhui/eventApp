@@ -6,15 +6,15 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-  <div *ngFor="let list of messages">
+<ion-content #messageContainer class="ion-padding">
+  <div #messageContainer *ngFor="let list of messages">
     <div class="is-flex" [class]="list.user === 'me' ? 'ion-text-end' : ''">
-      <p class="chat-title">
-        {{ list.user }}
-      </p>
-      <p [class]="list.user === 'me' ? 'chat-message-me' : 'chat-message'">
+      <p class="chat-title">{{ list.user }}</p>
+
+      <div [class]="list.user === 'me' ? 'chat-message-me' : 'chat-message'">
         {{ list.message }}
-      </p>
+        <div class="is-extra-small is-timestamp">{{ list.timestamp }}</div>
+      </div>
     </div>
   </div>
 </ion-content>
@@ -22,11 +22,9 @@
 <ion-footer>
   <div class="is-flex is-space-between is-align-center">
     <ion-textarea
-      #chat_input
       placeholder="Enter your message"
       [(ngModel)]="editorMsg"
       (keyup.enter)="sendMsg()"
-      (focusin)="onFocus()"
       class="chat-input"
     >
     </ion-textarea>

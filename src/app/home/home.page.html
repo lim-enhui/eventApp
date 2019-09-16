@@ -83,6 +83,16 @@
 </ion-menu>
 
 <ion-content id="home-content">
+  <ion-fab
+    class="ion-margin-bottom"
+    vertical="bottom"
+    horizontal="center"
+    slot="fixed"
+  >
+    <ion-fab-button (click)="navigateTo('create-new-event')">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
   <ion-card>
     <img src="assets/img/nin-live.png" />
     <ion-card-content>
