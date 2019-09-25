@@ -1,4 +1,4 @@
-<ion-header>
+<!-- <ion-header>
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
@@ -14,12 +14,12 @@
   >
     <ion-item *virtualItem="let contact" (click)="openMessage()">
       <ion-avatar slot="start" class="ion-margin-top">
-        <ion-img [src]="contact.picture.medium"></ion-img>
+        <ion-img [src]="contact"></ion-img>
       </ion-avatar>
       <ion-label>
         <div class="is-flex is-space-between ion-padding">
           <h2 class="ion-align-self-start">
-            {{ contact.name?.first }} {{ contact.name?.last }}
+            {{ contact }}
           </h2>
           <p class="ion-align-self-end">XX/XX/XXXX</p>
         </div>
@@ -38,4 +38,4 @@
       <ion-icon name="text"></ion-icon>
     </ion-fab-button>
   </ion-fab>
-</ion-content>
+</ion-content> -->

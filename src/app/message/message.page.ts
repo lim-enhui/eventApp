@@ -1,13 +1,9 @@
-import {
-  Component,
-  OnInit,
-  AfterViewInit,
-  ViewChild,
-  ElementRef,
-  AfterViewChecked
-} from "@angular/core";
+import { Component, OnInit, AfterViewInit, ViewChild } from "@angular/core";
 
 import { of } from "rxjs";
+import { AuthService } from "../auth/auth.service";
+import { AngularFirestore } from "@angular/fire/firestore";
+import { firestore } from "firebase";
 
 @Component({
   selector: "app-message",
@@ -20,7 +16,10 @@ export class MessagePage implements OnInit, AfterViewInit {
 
   @ViewChild("messageContainer") messageContainer;
 
-  constructor() {}
+  constructor(
+    private authService: AuthService,
+    private afs: AngularFirestore
+  ) {}
 
   ngAfterViewInit() {
     console.log(this.messageContainer);
@@ -80,8 +79,24 @@ export class MessagePage implements OnInit, AfterViewInit {
     });
   }
 
-  sendMsg() {
+  async sendMsg() {
     console.log(this.editorMsg);
+    let chatId = "6rMqgiaCczSQlnuW78Fh";
+    this.authService.userId.subscribe(uid => {
+      const data = {
+        uid,
+        content: this.editorMsg,
+        createdAt: Date.now()
+      };
+      console.log(uid);
+      if (uid) {
+        const ref = this.afs.collection("message").doc(chatId);
+        return ref.update({
+          chats: firestore.FieldValue.arrayUnion(data)
+        });
+      }
+    });
+
     this.editorMsg = "";
   }
 }
