@@ -1,13 +1,3 @@
-import {
-  outerJoinDocument,
-  leftJoinCollection,
-  leftJoinDocument,
-  testJoinDocument
-} from "./join.utils";
+import { messagesJoin } from "./join.utils";
 
-export {
-  leftJoinCollection,
-  leftJoinDocument,
-  outerJoinDocument,
-  testJoinDocument
-};
+export { messagesJoin };
