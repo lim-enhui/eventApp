@@ -1,0 +1,36 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-searchbar
+    showCancelButton="focus"
+    (ionChange)="filterInput($event)"
+  ></ion-searchbar>
+  <ion-virtual-scroll
+    [items]="contacts"
+    approxItemHeight="70px"
+    [headerFn]="seperateLetter"
+  >
+    <ion-item-divider *virtualHeader="let header">
+      <ion-label>{{ header }}</ion-label>
+    </ion-item-divider>
+
+    <ion-item *virtualItem="let contact">
+      <ion-avatar slot="start">
+        <ion-img [src]="contact.picture.medium"></ion-img>
+      </ion-avatar>
+      <ion-label>
+        <h2 class="ion-text-capitalize">
+          {{ contact.name?.first }} {{ contact.name?.last }}
+        </h2>
+        <p>{{ contact.email }}</p>
+      </ion-label>
+      <ion-icon name="add" slot="end" (click)="addContact(contact)"></ion-icon>
+    </ion-item>
+  </ion-virtual-scroll>
+</ion-content>

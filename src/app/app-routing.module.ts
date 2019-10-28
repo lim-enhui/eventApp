@@ -19,9 +19,28 @@ const routes: Routes = [
     path: "message",
     loadChildren: "./message/message.module#MessagePageModule"
   },
-  { path: 'teleport', loadChildren: './teleport/teleport.module#TeleportPageModule' },
-  { path: 'select-contact-to-message', loadChildren: './select-contact-to-message/select-contact-to-message.module#SelectContactToMessagePageModule' },
-  { path: 'create-new-event', loadChildren: './create-new-event/create-new-event.module#CreateNewEventPageModule' }
+  {
+    path: "teleport",
+    loadChildren: "./teleport/teleport.module#TeleportPageModule"
+  },
+  {
+    path: "select-contact-to-message",
+    loadChildren:
+      "./select-contact-to-message/select-contact-to-message.module#SelectContactToMessagePageModule"
+  },
+  {
+    path: "create-new-event",
+    loadChildren:
+      "./create-new-event/create-new-event.module#CreateNewEventPageModule"
+  },
+  {
+    path: "add-contact",
+    loadChildren: "./add-contact/add-contact.module#AddContactPageModule"
+  },
+  {
+    path: "my-settings",
+    loadChildren: "./my-settings/my-settings.module#MySettingsPageModule"
+  }
 ];
 
 @NgModule({

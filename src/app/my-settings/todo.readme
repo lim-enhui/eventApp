@@ -1,0 +1,9 @@
+- displayName should be bind with existing displayName
+- phoneNumber should be bind with existing phoneNumber
+- email should be bind with existing email
+- when save clicked, all changes will reflect.
+- allow user to update email and phone number.
+- the change should reflect on both search collection 
+and users.
+- the search should only relfect photoUrl displayName and uid
+- If search is toggle false. Then delete user entry from the search.

@@ -18,6 +18,7 @@ import { CallNumber } from "@ionic-native/call-number/ngx";
 import { FileOpener } from "@ionic-native/file-opener/ngx";
 import { FileTransfer } from "@ionic-native/file-transfer/ngx";
 import { File } from "@ionic-native/file/ngx";
+import { FileChooser } from "@ionic-native/file-chooser/ngx";
 import { Geolocation } from "@ionic-native/geolocation/ngx";
 
 import { AppComponent } from "./app.component";
@@ -66,6 +67,7 @@ const firebaseConfig = {
     Facebook,
     FileOpener,
     FileTransfer,
+    FileChooser,
     File,
     CallNumber,
     Geolocation,

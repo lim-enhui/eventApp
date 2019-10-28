@@ -404,3 +404,15 @@ export const leftJoinDocument = (afs: AngularFirestore, field, collection) => {
       );
     });
 };
+
+
+      <ion-avatar slot="start" class="ion-margin-top">
+        <ion-img [src]="contact"></ion-img>
+      </ion-avatar>
+      <ion-label>
+        <div class="is-flex is-space-between ion-padding">
+          <h2 class="ion-align-self-start"></h2>
+          <p class="ion-align-self-end">XX/XX/XXXX</p>
+        </div>
+        <p class="ion-padding-start">last message</p>
+      </ion-label>

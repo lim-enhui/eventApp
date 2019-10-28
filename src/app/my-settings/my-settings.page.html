@@ -10,7 +10,40 @@
 </ion-header>
 
 <ion-content>
-  <div class="ion-padding">
-    MY SETTINGS PAGE
-  </div>
+  <ion-list>
+    <ion-item>
+      <ion-label>
+        <ion-avatar>
+          <ion-img [src]="userImage"></ion-img>
+        </ion-avatar>
+      </ion-label>
+
+      <ion-button fill="outline" (click)="openFileChooser()">
+        Upload a new photo
+      </ion-button>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">DisplayName</ion-label>
+      <ion-input></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Email</ion-label>
+      <ion-input></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Phone Number</ion-label>
+      <ion-input></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label s>Searchable</ion-label>
+      <ion-toggle
+        (ionChange)="searchableToggle($event)"
+        [(ngModel)]="userIsSearchable"
+      ></ion-toggle>
+    </ion-item>
+  </ion-list>
+
+  <ion-button expand="block" fill="outline" class="ion-padding" size="large"
+    >Save</ion-button
+  >
 </ion-content>

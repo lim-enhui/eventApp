@@ -5,3 +5,24 @@
 .is-space-between {
   justify-content: space-between;
 }
+
+.is-baseline {
+  align-items: baseline;
+}
+
+.icon-color {
+  color: #c8c8c8;
+}
+
+.date-format {
+  word-break: break-all;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.ion-padding.sm {
+  padding-top: var(--ion-padding, 4px);
+  padding-bottom: var(--ion-padding, 4px);
+}

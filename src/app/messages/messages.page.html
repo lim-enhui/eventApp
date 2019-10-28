@@ -1,4 +1,4 @@
-<!-- <ion-header>
+<ion-header>
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
@@ -7,26 +7,61 @@
 </ion-header>
 
 <ion-content>
-  <ion-virtual-scroll
-    [items]="contacts"
-    approxItemHeight="70px"
-    [headerFn]="seperateLetter"
-  >
-    <ion-item *virtualItem="let contact" (click)="openMessage()">
-      <ion-avatar slot="start" class="ion-margin-top">
-        <ion-img [src]="contact"></ion-img>
-      </ion-avatar>
-      <ion-label>
-        <div class="is-flex is-space-between ion-padding">
-          <h2 class="ion-align-self-start">
-            {{ contact }}
-          </h2>
-          <p class="ion-align-self-end">XX/XX/XXXX</p>
+  <ion-list>
+    <div *ngFor="let message of messages; let i = index">
+      <div
+        style="width: 100%;"
+        *ngIf="message.chats.length != 0; else empty_conversation"
+        (click)="openMessage(message.id)"
+      >
+        <div
+          style="width: 100%;"
+          *ngFor="let item of message.chats; let last = last; let index = index"
+        >
+          <ion-item *ngIf="last">
+            <ion-avatar slot="start" class="ion-margin-top">
+              <ion-img [src]="message.chats[index].uid.photoUrl"></ion-img>
+            </ion-avatar>
+            <ion-label>
+              <div class="is-flex is-space-between is-baseline ion-padding sm">
+                <h2 class="ion-align-self-start">
+                  {{ message.chats[index].uid.displayName }}
+                </h2>
+                <span class="ion-align-self-start text-right">
+                  <p class="date-format">
+                    {{ message.chats[index].createdAt | date: "mediumDate" }}
+                  </p>
+                  <p class="date-format">
+                    <small>{{
+                      message.chats[index].createdAt | date: "shortTime"
+                    }}</small>
+                  </p>
+                </span>
+              </div>
+              <p class="ion-padding-start">
+                {{ message.chats[index].content }}
+              </p>
+            </ion-label>
+          </ion-item>
         </div>
-        <p class="ion-padding-start">last message</p>
-      </ion-label>
-    </ion-item>
-  </ion-virtual-scroll>
+      </div>
+      <ng-template #empty_conversation>
+        <ion-item (click)="openMessage(message.id)">
+          <ion-avatar slot="start" class="ion-margin-top">
+            <ion-icon
+              class="icon-color"
+              name="mail-unread"
+              size="large"
+            ></ion-icon>
+          </ion-avatar>
+          <ion-label>
+            <p>You missed a conversation!</p>
+          </ion-label>
+        </ion-item>
+      </ng-template>
+    </div>
+  </ion-list>
+
   <ion-fab
     vertical="bottom"
     horizontal="end"
@@ -38,4 +73,4 @@
       <ion-icon name="text"></ion-icon>
     </ion-fab-button>
   </ion-fab>
-</ion-content> -->
+</ion-content>

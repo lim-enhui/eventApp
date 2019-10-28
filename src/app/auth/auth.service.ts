@@ -19,7 +19,6 @@ export interface IUser {
   displayName: string;
   photoUrl?: string;
   email: string;
-  isSearchable: boolean;
   phoneNumber?: number | null | string;
 }
 
@@ -129,16 +128,15 @@ export class AuthService {
             displayName: userData.user.displayName,
             photoUrl: userData.user.photoURL ? userData.user.photoURL : "",
             email: userData.user.email,
-            isSearchable: true,
             phoneNumber: userData.user.phoneNumber
           });
         } else {
           if (loginMethod == "google" || loginMethod == "facebook") {
-            this.userDoc.update({
-              displayName: userData.user.displayName,
-              photoUrl: userData.user.photoURL,
-              email: userData.user.email
-            });
+            // this.userDoc.update({
+            //   displayName: userData.user.displayName,
+            //   photoUrl: userData.user.photoURL,
+            //   email: userData.user.email
+            // });
           }
         }
       });

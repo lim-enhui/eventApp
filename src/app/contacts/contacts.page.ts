@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { CallNumber } from "@ionic-native/call-number/ngx";
+import { Router } from "@angular/router";
 @Component({
   selector: "app-contacts",
   templateUrl: "./contacts.page.html",
@@ -9,7 +10,11 @@ import { CallNumber } from "@ionic-native/call-number/ngx";
 export class ContactsPage implements OnInit {
   contacts;
 
-  constructor(private http: HttpClient, private callNumber: CallNumber) {}
+  constructor(
+    private http: HttpClient,
+    private callNumber: CallNumber,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.loadContacts();
@@ -51,5 +56,11 @@ export class ContactsPage implements OnInit {
       .callNumber(contactNumber, true)
       .then(res => console.log("Launched dialer!", res))
       .catch(err => console.log("Error launching dialer", err));
+  }
+
+  navigateTo(page) {
+    const url = "/" + page;
+    console.log(url);
+    this.router.navigate([url]);
   }
 }

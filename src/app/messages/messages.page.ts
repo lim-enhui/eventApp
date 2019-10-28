@@ -12,14 +12,11 @@ import { messagesJoin } from "../utils/utils";
 
 @Component({
   selector: "app-messages",
-  // templateUrl: "./messages.page.html",
-  template: `
-    <h1>Testing</h1>
-  `,
+  templateUrl: "./messages.page.html",
   styleUrls: ["./messages.page.scss"]
 })
 export class MessagesPage implements OnInit {
-  contacts;
+  messages;
 
   constructor(
     private httpClient: HttpClient,
@@ -41,7 +38,9 @@ export class MessagesPage implements OnInit {
       .doc(`users/${userId}/private/inbox`)
       .valueChanges()
       .pipe(messagesJoin(this.afs))
-      .subscribe(console.log);
+      .subscribe(data => {
+        this.messages = data["messages"];
+      });
   }
 
   getMessage(id) {
@@ -51,9 +50,9 @@ export class MessagesPage implements OnInit {
       .valueChanges();
   }
 
-  openMessage() {
+  openMessage(id) {
     console.log("Open Message");
-    this.navCtrl.navigateForward("/message");
+    this.navCtrl.navigateForward("/message/" + id);
   }
 
   navigateTo(url) {

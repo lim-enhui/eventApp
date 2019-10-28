@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar color="primary">
     <ion-buttons slot="end">
-      <ion-button>
+      <ion-button (click)="navigateTo('add-contact')">
         <ion-icon slot="icon-only" name="add"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -29,7 +29,7 @@
         <ion-img [src]="contact.picture.medium"></ion-img>
       </ion-avatar>
       <ion-label>
-        <h2 text-capitalize>
+        <h2 class="ion-text-capitalize">
           {{ contact.name?.first }} {{ contact.name?.last }}
         </h2>
         <p>{{ contact.email }}</p>

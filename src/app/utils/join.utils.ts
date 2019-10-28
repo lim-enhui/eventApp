@@ -1,5 +1,5 @@
 import { AngularFirestore } from "@angular/fire/firestore";
-import { defer, of, combineLatest } from "rxjs";
+import { defer, of, combineLatest, Observable } from "rxjs";
 import { map, switchMap } from "rxjs/operators";
 
 export const messagesJoin = (afs: AngularFirestore) => {

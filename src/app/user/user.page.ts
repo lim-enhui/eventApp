@@ -5,6 +5,7 @@ import { ModalController } from "@ionic/angular";
 import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
 import { QrCodePage } from "../qr-code/qr-code.page";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-user",
@@ -16,7 +17,8 @@ export class UserPage implements OnInit {
 
   constructor(
     private http: HttpClient,
-    public modalController: ModalController
+    public modalController: ModalController,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -34,5 +36,10 @@ export class UserPage implements OnInit {
       component: QrCodePage
     });
     return await modal.present();
+  }
+
+  navigateTo(page) {
+    const url = "/" + page;
+    this.router.navigate([url]);
   }
 }
