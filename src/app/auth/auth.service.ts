@@ -13,6 +13,9 @@ import {
   AngularFirestore,
   AngularFirestoreDocument
 } from "@angular/fire/firestore";
+import { Store, select } from "@ngrx/store";
+import * as fromAppReducer from "../store/app.reducer";
+import * as fromAppActions from "../store/app.actions";
 
 export interface IUser {
   uid: string;
@@ -56,7 +59,8 @@ export class AuthService {
     private afAuth: AngularFireAuth,
     private gplus: GooglePlus,
     private fb: Facebook,
-    private afs: AngularFirestore
+    private afs: AngularFirestore,
+    private store: Store<fromAppReducer.AppState>
   ) {}
 
   async nativeFacebookLogin() {
@@ -141,8 +145,15 @@ export class AuthService {
         }
       });
 
+    this.store.dispatch(
+      fromAppActions.updateUserId({
+        userId: userData.user.uid
+      })
+    );
+
     userData.user.getIdToken().then(idToken => {
       console.log(userData.user);
+
       this._user.next(
         new User(
           userData.user.uid,
@@ -191,6 +202,11 @@ export class AuthService {
       tap(user => {
         if (user) {
           this._user.next(user);
+          this.store.dispatch(
+            fromAppActions.updateUserId({
+              userId: user.id
+            })
+          );
         }
       }),
       map(user => {

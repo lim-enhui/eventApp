@@ -4,18 +4,9 @@ import {
   AngularFirestoreDocument
 } from "@angular/fire/firestore";
 import { AuthService } from "../auth/auth.service";
-import { switchMap, map } from "rxjs/operators";
 import { FileChooser } from "@ionic-native/file-chooser/ngx";
-import { ActionSheetController } from "@ionic/angular";
-
-export interface IUser {
-  uid: string;
-  displayName: string;
-  photoUrl?: string;
-  email: string;
-  isSearchable: boolean;
-  phoneNumber?: number | null | string;
-}
+import { IUser } from "../model/user.interface";
+import { map } from "rxjs/operators";
 
 @Component({
   selector: "app-my-settings",
@@ -29,7 +20,8 @@ export class MySettingsPage implements OnInit {
   public userImage: string;
   public userDisplayName: string;
   public userPhoneNumber: number | string;
-  userIsSearchable: boolean = false;
+  public userEmail: string;
+  public userIsSearchable: boolean = false;
 
   constructor(
     private afs: AngularFirestore,
@@ -38,28 +30,34 @@ export class MySettingsPage implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.auth.userId.subscribe(uid => {
-      this.uid = uid;
-      this.userDoc = this.afs.doc<IUser>(`users/${this.uid}`);
-      this.searchUserDoc = this.afs.doc(`search/${this.uid}`);
-      this.searchUserDoc
-        .get()
-        .toPromise()
-        .then(docSnapshot => {
-          if (!docSnapshot.exists) {
-            this.userIsSearchable = false;
-          } else {
-            this.userIsSearchable = true;
-          }
-        });
+    this.auth.userId
+      .pipe(
+        map(uid => {
+          this.uid = uid;
+        })
+      )
+      .subscribe(() => {
+        this.userDoc = this.afs.doc<IUser>(`users/${this.uid}`);
+        this.searchUserDoc = this.afs.doc(`search/${this.uid}`);
+        this.searchUserDoc
+          .get()
+          .toPromise()
+          .then(docSnapshot => {
+            if (!docSnapshot.exists) {
+              this.userIsSearchable = false;
+            } else {
+              this.userIsSearchable = true;
+            }
+          });
 
-      this.userDoc.valueChanges().subscribe(userData => {
-        const { displayName, phoneNumber, photoUrl } = userData;
-        this.userImage = photoUrl;
-        this.userDisplayName = displayName;
-        this.userPhoneNumber = phoneNumber;
+        this.userDoc.valueChanges().subscribe(userData => {
+          const { displayName, phoneNumber, photoUrl, email } = userData;
+          this.userImage = photoUrl;
+          this.userDisplayName = displayName;
+          this.userPhoneNumber = phoneNumber;
+          this.userEmail = email;
+        });
       });
-    });
   }
 
   openFileChooser() {
@@ -69,23 +67,54 @@ export class MySettingsPage implements OnInit {
       .catch(e => console.log(e));
   }
 
+  updateInput(event, field) {
+    switch (field) {
+      case "userDisplayName": {
+        this.userDisplayName = event.detail.value;
+        break;
+      }
+      case "userPhoneNumber": {
+        this.userPhoneNumber = event.detail.value;
+        break;
+      }
+      case "userEmail": {
+        this.userEmail = event.detail.value;
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+  }
+
   searchableToggle(event) {
     console.log(event.detail.checked);
     console.log(this.uid);
-    if (event.detail.checked) {
-      this.userDoc
-        .valueChanges()
-        .pipe(
-          map(data => {
-            const { displayName, photoUrl, uid } = data;
-            return { displayName, photoUrl, uid };
-          })
-        )
-        .subscribe(userData => {
-          this.searchUserDoc.set(userData);
-        });
-    } else {
-      this.searchUserDoc.delete();
-    }
+    this.userIsSearchable = event.detail.checked;
+    // if (event.detail.checked) {
+    //   this.userDoc
+    //     .valueChanges()
+    //     .pipe(
+    //       map(data => {
+    //         const { displayName, photoUrl, uid } = data;
+    //         return { displayName, photoUrl, uid };
+    //       })
+    //     )
+    //     .subscribe(userData => {
+    //       this.searchUserDoc.set(userData);
+    //     });
+    // } else {
+    //   this.searchUserDoc.delete();
+    // }
+  }
+
+  onSave() {
+    console.log("userDisplayName", this.userDisplayName);
+    console.log("userPhoneNumber", this.userPhoneNumber);
+    console.log("userEmail", this.userEmail);
+    console.log("userIsSearchable", this.userIsSearchable);
+
+    // update user
+    // update search
   }
 }

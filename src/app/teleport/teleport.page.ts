@@ -21,7 +21,7 @@ export class TeleportPage implements OnInit {
 
   constructor(
     private geolocationService: GeolocationService,
-    private store: Store<any>
+    private store: Store<fromAppReducer.AppState>
   ) {}
 
   ngOnInit() {

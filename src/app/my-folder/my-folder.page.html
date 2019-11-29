@@ -9,8 +9,7 @@
 <ion-content>
   <ion-grid style="height: 100%" *ngIf="isLoading; else showContent">
     <ion-row
-      justify-content-center
-      align-items-center
+      class="ion-align-items-center ion-justify-content-center"
       style="height: 100%; flex-direction: column"
     >
       <ion-spinner name="crescent"></ion-spinner>
@@ -26,18 +25,20 @@
     >
       <div class="ion-margin-end" *virtualItem="let files">
         <ion-list-header class="ion-margin-top">
-          <ion-label>{{
-            files.date == currentDate.toDateString()
-              ? "Today"
-              : files.date == yesterdayDate.toDateString()
-              ? "Yesterday"
-              : files.date
-          }}</ion-label>
+          <ion-label
+            >{{ files.date == currentDate.toDateString() ? "Today" : files.date
+            == yesterdayDate.toDateString() ? "Yesterday" : files.date
+            }}</ion-label
+          >
         </ion-list-header>
 
         <div *ngFor="let item of files.items">
           <ion-item-sliding>
-            <ion-item detail class="padding inner top bottom end md">
+            <ion-item
+              detail
+              class="padding inner top bottom end md"
+              (click)="openItem(item)"
+            >
               <ion-icon [name]="iconType(item.type)" slot="start"></ion-icon>
               <ion-label>
                 {{ item.name }}

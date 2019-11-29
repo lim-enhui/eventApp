@@ -1,3 +1,19 @@
 <ion-content [class.show-qr-scanner]="isOn">
-    
+  <div
+    class="is-bottom is-center is-full background white is-bottom-tab is-flex"
+  >
+    <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+      <ion-fab-button>
+        <ion-icon name="options"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-list side="top">
+        <ion-fab-button (click)="navigateTo('/tabs/home')"
+          ><ion-icon name="exit"></ion-icon
+        ></ion-fab-button>
+        <ion-fab-button (click)="toggleFlashLight()"
+          ><ion-icon name="flash"></ion-icon
+        ></ion-fab-button>
+      </ion-fab-list>
+    </ion-fab>
+  </div>
 </ion-content>

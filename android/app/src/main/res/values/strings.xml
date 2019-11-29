@@ -3,7 +3,6 @@
     <string name="app_name">eventApp</string>
     <string name="title_activity_main">eventApp</string>
     <string name="package_name">io.ionic.starter</string>
-    <string name="fileprovider_authority">io.ionic.starter.fileprovider</string>
     <string name="custom_url_scheme">io.ionic.starter</string>
     <string name="fb_app_id">802511666787825</string>
     <string name="fb_app_name">eventApp</string>

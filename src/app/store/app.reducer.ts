@@ -8,6 +8,7 @@ export interface AppState {
   };
   loading: boolean;
   loaded: boolean;
+  userId: string;
 }
 
 const initialState: AppState = {
@@ -16,7 +17,8 @@ const initialState: AppState = {
     longitude: null
   },
   loading: false,
-  loaded: true
+  loaded: true,
+  userId: ""
 };
 
 export const appReducer = createReducer(
@@ -38,10 +40,21 @@ export const appReducer = createReducer(
         longitude: payload.longitude
       }
     };
+  }),
+  on(fromRoot.updateUserId, (state, payload) => {
+    return {
+      ...state,
+      userId: payload.userId
+    };
   })
 );
 
 export const selectApp = state => state.app;
+
+export const selectUserId = createSelector(
+  selectApp,
+  (state: AppState) => state.userId
+);
 
 export const selectGeolocation = createSelector(
   selectApp,

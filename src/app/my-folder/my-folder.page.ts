@@ -1,8 +1,8 @@
 import { Component, OnInit } from "@angular/core";
 import * as faker from "faker";
 import { of, Observable } from "rxjs";
-import { delay } from "rxjs/operators";
-import { LoadingController } from "@ionic/angular";
+import { delay, switchMap } from "rxjs/operators";
+import { LoadingController, ToastController } from "@ionic/angular";
 
 import { AngularFireStorage } from "@angular/fire/storage";
 
@@ -13,6 +13,10 @@ import {
   FileTransferObject
 } from "@ionic-native/file-transfer/ngx";
 import { File } from "@ionic-native/file/ngx";
+import { Store, select } from "@ngrx/store";
+import * as fromAppReducer from "../store/app.reducer";
+import * as fromAppActions from "../store/app.actions";
+import { AngularFirestore } from "@angular/fire/firestore";
 
 @Component({
   selector: "app-my-folder",
@@ -35,13 +39,26 @@ export class MyFolderPage implements OnInit {
     private storage: AngularFireStorage,
     private fileOpener: FileOpener,
     private transfer: FileTransfer,
-    private file: File
+    private file: File,
+    private afs: AngularFirestore,
+    private toastController: ToastController,
+    private store: Store<fromAppReducer.AppState>
   ) {
     this.yesterdayDate.setDate(this.currentDate.getDate() - 1);
   }
 
   ngOnInit() {
     this.filter = "recent";
+    this.store
+      .pipe(
+        select(fromAppReducer.selectUserId),
+        switchMap(userId => {
+          return this.afs.doc(`users/${userId}/private/items`).valueChanges();
+        })
+      )
+      .subscribe(data => {
+        console.log(data);
+      });
 
     const source = of([
       {
@@ -149,6 +166,35 @@ export class MyFolderPage implements OnInit {
           throw Error("Unable to download file.");
         }
       );
+  }
+
+  openItem(item) {
+    console.log(item);
+    switch (item.type) {
+      case "ppt":
+      case "pptx":
+        this.dlOpenPptxFile();
+        break;
+      case "pdf":
+        this.dlOpenPdfFile();
+        break;
+      case "jpg":
+      case "jpeg":
+      case "png":
+      case "gif":
+        this.dlOpenImageFile();
+        break;
+      default:
+        this.presentToast(false);
+    }
+  }
+
+  async presentToast(supported) {
+    const toast = await this.toastController.create({
+      message: "File format is not supported in application.",
+      duration: 2000
+    });
+    toast.present();
   }
 
   async dlOpenPptxFile() {

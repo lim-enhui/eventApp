@@ -3,6 +3,7 @@ import { ActionSheetController } from "@ionic/angular";
 
 import { QRScanner, QRScannerStatus } from "@ionic-native/qr-scanner/ngx";
 import { Router } from "@angular/router";
+import { BehaviorSubject } from "rxjs";
 
 @Component({
   selector: "app-qr-scanner",
@@ -10,8 +11,13 @@ import { Router } from "@angular/router";
   styleUrls: ["./qr-scanner.page.scss"]
 })
 export class QrScannerPage implements OnInit {
-  isOn = false;
-  scannedData: {};
+  public isOn: boolean = false;
+  public scannedData: any = {};
+  public isScanning$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
+    false
+  );
+  public reInitProcessNextActionSheet: boolean = false;
+  public isFlashLightOn: boolean = false;
 
   constructor(
     private qrScanner: QRScanner,
@@ -31,38 +37,57 @@ export class QrScannerPage implements OnInit {
     );
   }
 
-  async presentActionSheet() {
+  async presentProcessNextActionSheet() {
     const actionSheet = await this.actionSheetController.create({
-      header: "Albums",
+      header: "Item Collection",
+      backdropDismiss: false,
       buttons: [
-        {
-          text: "Delete",
-          role: "destructive",
-          icon: "trash",
-          handler: () => {
-            console.log("Delete clicked");
-          }
-        },
         {
           text: "Open",
           icon: "open",
           handler: () => {
-            console.log("Open File clicked");
+            console.log("open clicked");
+            this.reInitProcessNextActionSheet = true;
           }
         },
         {
-          text: "Save into Folder",
-          icon: "folder-open",
+          text: "Add To Collection",
+          icon: "bookmark",
           handler: () => {
-            console.log("Play clicked");
-            this.router.navigate(["/tabs/my-folder"]);
+            console.log("Add to Collection clicked");
           }
         },
         {
-          text: "Favorite",
-          icon: "heart",
+          text: "Cancel",
+          icon: "close",
+          role: "cancel",
           handler: () => {
-            console.log("Favorite clicked");
+            console.log("Cancel clicked");
+          }
+        }
+      ]
+    });
+
+    actionSheet.onDidDismiss().then(() => {
+      if (this.reInitProcessNextActionSheet) {
+        console.log("open Item");
+      }
+    });
+
+    await actionSheet.present();
+  }
+
+  async presentRescanActionSheet() {
+    const actionSheet = await this.actionSheetController.create({
+      header: "Item Collection",
+      backdropDismiss: false,
+      buttons: [
+        {
+          text: "Rescan",
+          icon: "arrow-dropright-circle",
+          handler: () => {
+            console.log("Rescan clicked");
+            this.initQRScanner();
           }
         },
         {
@@ -84,6 +109,7 @@ export class QrScannerPage implements OnInit {
   }
 
   initQRScanner() {
+    this.isScanning$.next(true);
     this.qrScanner
       .prepare()
       .then((status: QRScannerStatus) => {
@@ -96,7 +122,7 @@ export class QrScannerPage implements OnInit {
 
             this.isOn = false;
 
-            this.presentActionSheet();
+            this.presentProcessNextActionSheet();
 
             this.qrScanner.hide().then();
             scanSub.unsubscribe();
@@ -115,11 +141,32 @@ export class QrScannerPage implements OnInit {
       .catch((e: any) => console.log("Error is", e));
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.isScanning$.subscribe(bool => {
+      bool
+        ? console.log("isScanning ", bool)
+        : this.presentProcessNextActionSheet();
+    });
+  }
+
+  toggleFlashLight() {
+    this.isFlashLightOn = !this.isFlashLightOn;
+    if (this.isFlashLightOn) {
+      this.qrScanner.enableLight();
+    } else {
+      this.qrScanner.disableLight();
+    }
+  }
 
   ionViewWillLeave() {
     this.qrScanner.pausePreview();
     this.qrScanner.hide();
     this.hideCamera();
+  }
+
+  navigateTo(page) {
+    const url = "/" + page;
+    console.log(url);
+    this.router.navigate([url]);
   }
 }

@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
 import { Subject, combineLatest } from "rxjs";
+import { AngularFirestore } from "@angular/fire/firestore";
 
 @Component({
   selector: "app-add-contact",
@@ -13,26 +14,34 @@ export class AddContactPage implements OnInit {
   public searchInput = "";
   public searchInput$ = new Subject();
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private afs: AngularFirestore) {}
 
   ngOnInit() {
     this.loadContacts();
   }
 
   filterInput(event) {
-    this.searchInput$.next(event.detail.value);
+    if (event.detail.value.length > 3) {
+      this.searchInput$.next(event.detail.value);
+    }
   }
 
   loadContacts() {
-    let fetchContacts = this.http.get("https://randomuser.me/api/?results=50");
+    let fetchContacts = this.afs.collection("search").valueChanges();
+
     combineLatest(fetchContacts, this.searchInput$).subscribe(data => {
-      this.contacts = data[0]["results"].filter(el => {
-        return (
-          el.name.first.toLowerCase().includes(data[1]) ||
-          el.name.last.toLowerCase().includes(data[1]) ||
-          el.login.username.toLowerCase().includes(data[1])
-        );
-      });
+      this.contacts = [
+        data[0].find((el: any) => {
+          return el.displayName.toLowerCase().includes(data[1]);
+        })
+      ];
+      console.log(this.contacts);
     });
+  }
+
+  addContact(contact) {
+    console.log(contact);
+    // this.afs.doc(`/users/${}`)
+    //  set request on pending...
   }
 }

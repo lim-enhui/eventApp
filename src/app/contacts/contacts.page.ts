@@ -8,7 +8,7 @@ import { Router } from "@angular/router";
   styleUrls: ["./contacts.page.scss"]
 })
 export class ContactsPage implements OnInit {
-  contacts;
+  public contacts;
 
   constructor(
     private http: HttpClient,

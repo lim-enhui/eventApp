@@ -24,18 +24,27 @@
     </ion-item>
     <ion-item>
       <ion-label position="stacked">DisplayName</ion-label>
-      <ion-input></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-label position="stacked">Email</ion-label>
-      <ion-input></ion-input>
+      <ion-input
+        [value]="userDisplayName"
+        (ionChange)="updateInput($event, 'userDisplayName')"
+      ></ion-input>
     </ion-item>
     <ion-item>
       <ion-label position="stacked">Phone Number</ion-label>
-      <ion-input></ion-input>
+      <ion-input
+        [value]="userPhoneNumber"
+        (ionChange)="updateInput($event, 'userPhoneNumber')"
+      ></ion-input>
     </ion-item>
     <ion-item>
-      <ion-label s>Searchable</ion-label>
+      <ion-label position="stacked">Email</ion-label>
+      <ion-input
+        [value]="userEmail"
+        (ionChange)="updateInput($event, 'userEmail')"
+      ></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>Searchable</ion-label>
       <ion-toggle
         (ionChange)="searchableToggle($event)"
         [(ngModel)]="userIsSearchable"
@@ -43,7 +52,12 @@
     </ion-item>
   </ion-list>
 
-  <ion-button expand="block" fill="outline" class="ion-padding" size="large"
+  <ion-button
+    expand="block"
+    fill="outline"
+    class="ion-padding"
+    size="large"
+    (click)="onSave()"
     >Save</ion-button
   >
 </ion-content>

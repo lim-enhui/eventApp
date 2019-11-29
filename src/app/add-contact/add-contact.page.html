@@ -17,16 +17,16 @@
     [headerFn]="seperateLetter"
   >
     <ion-item-divider *virtualHeader="let header">
-      <ion-label>{{ header }}</ion-label>
+      <ion-label>header</ion-label>
     </ion-item-divider>
 
     <ion-item *virtualItem="let contact">
       <ion-avatar slot="start">
-        <ion-img [src]="contact.picture.medium"></ion-img>
+        <ion-img [src]="contact.photoUrl"></ion-img>
       </ion-avatar>
       <ion-label>
         <h2 class="ion-text-capitalize">
-          {{ contact.name?.first }} {{ contact.name?.last }}
+          {{ contact.displayName }}
         </h2>
         <p>{{ contact.email }}</p>
       </ion-label>

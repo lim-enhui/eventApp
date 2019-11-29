@@ -114,3 +114,22 @@ html.cameraView {
     --background: var(--ion-background-color, transparent);
   }
 }
+
+.is-flex {
+  display: flex;
+}
+
+.is-bottom {
+  position: fixed;
+  bottom: 0;
+}
+
+.is-center {
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+}
+
+.background.white {
+  background-color: #ffffff;
+}

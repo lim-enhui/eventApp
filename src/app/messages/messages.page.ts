@@ -16,7 +16,7 @@ import { messagesJoin } from "../utils/utils";
   styleUrls: ["./messages.page.scss"]
 })
 export class MessagesPage implements OnInit {
-  messages;
+  public messages;
 
   constructor(
     private httpClient: HttpClient,
@@ -38,8 +38,8 @@ export class MessagesPage implements OnInit {
       .doc(`users/${userId}/private/inbox`)
       .valueChanges()
       .pipe(messagesJoin(this.afs))
-      .subscribe(data => {
-        this.messages = data["messages"];
+      .subscribe((data: any) => {
+        this.messages = data.messages;
       });
   }
 

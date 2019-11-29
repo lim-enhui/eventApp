@@ -1,13 +1,12 @@
-import { Injectable } from '@angular/core';
-import { CanLoad, Route, UrlSegment, Router } from '@angular/router';
-import { Observable, of } from 'rxjs';
-import { take, tap, switchMap } from 'rxjs/operators';
+import { Injectable } from "@angular/core";
+import { CanLoad, Route, UrlSegment, Router } from "@angular/router";
+import { Observable, of } from "rxjs";
+import { take, tap, switchMap } from "rxjs/operators";
 
-import { AuthService } from './auth.service';
-import { getAllRouteGuards } from '@angular/router/src/utils/preactivation';
+import { AuthService } from "./auth.service";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root"
 })
 export class AuthGuard implements CanLoad {
   constructor(private authService: AuthService, private router: Router) {}
@@ -27,7 +26,7 @@ export class AuthGuard implements CanLoad {
       }),
       tap(isAuthenticated => {
         if (!isAuthenticated) {
-          this.router.navigateByUrl('/auth');
+          this.router.navigateByUrl("/auth");
         }
       })
     );
