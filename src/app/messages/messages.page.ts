@@ -3,10 +3,6 @@ import { HttpClient } from "@angular/common/http";
 import { NavController } from "@ionic/angular";
 import { AuthService } from "../auth/auth.service";
 import { AngularFirestore } from "@angular/fire/firestore";
-import { combineLatest, map, switchMap } from "rxjs/operators";
-
-import { State } from "@ngrx/store";
-import { Observable, ObservableInput, of, defer } from "rxjs";
 
 import { messagesJoin } from "../utils/utils";
 

@@ -1,6 +1,36 @@
 import { AngularFirestore } from "@angular/fire/firestore";
-import { defer, of, combineLatest, Observable } from "rxjs";
+import { defer, of, combineLatest } from "rxjs";
 import { map, switchMap } from "rxjs/operators";
+
+export const itemsJoin = (afs: AngularFirestore) => {
+  return source =>
+    defer(() => {
+      return source.pipe(
+        switchMap((payload: { items: Array<string> }) => {
+          if (Array.isArray(payload.items)) {
+            console.log(payload.items);
+            let itemDoc$ = [];
+            payload.items.forEach(element => {
+              itemDoc$.push(
+                afs
+                  .doc(`item/${element}`)
+                  .snapshotChanges()
+                  .pipe(
+                    map(actions => {
+                      const id = actions.payload.id;
+                      const data = actions.payload.data();
+                      return { id, ...data };
+                    })
+                  )
+              );
+            });
+            return combineLatest(itemDoc$);
+          }
+          return of(payload);
+        })
+      );
+    });
+};
 
 export const messagesJoin = (afs: AngularFirestore) => {
   return source =>

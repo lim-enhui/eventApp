@@ -20,6 +20,7 @@ import { FileTransfer } from "@ionic-native/file-transfer/ngx";
 import { File } from "@ionic-native/file/ngx";
 import { FileChooser } from "@ionic-native/file-chooser/ngx";
 import { Geolocation } from "@ionic-native/geolocation/ngx";
+import { SocialSharing } from "@ionic-native/social-sharing/ngx";
 
 import { AppComponent } from "./app.component";
 import { AppRoutingModule } from "./app-routing.module";
@@ -71,6 +72,7 @@ const firebaseConfig = {
     File,
     CallNumber,
     Geolocation,
+    SocialSharing,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

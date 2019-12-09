@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  firebaseAPIKey: 'AIzaSyDX878vWfnXaGwPKAM_WJ_BgWnwhIv3v20'
+  firebaseAPIKey: "AIzaSyDt62DvELJCSKaaEuJvsjJAdj2XhO3a5_w"
 };
 
 /*

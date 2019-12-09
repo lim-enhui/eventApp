@@ -1,14 +1,12 @@
 import * as fromRoot from "./app.actions";
-import { createReducer, on, createSelector } from "@ngrx/store";
+import { createReducer, on, createSelector, State } from "@ngrx/store";
+import { IGeoLocation } from "./geolocation.model";
 
 export interface AppState {
-  geolocation: {
-    latitude: number | null;
-    longitude: number | null;
-  };
+  geolocation: IGeoLocation;
   loading: boolean;
-  loaded: boolean;
   userId: string;
+  isScanning: boolean;
 }
 
 const initialState: AppState = {
@@ -17,8 +15,8 @@ const initialState: AppState = {
     longitude: null
   },
   loading: false,
-  loaded: true,
-  userId: ""
+  userId: "",
+  isScanning: false
 };
 
 export const appReducer = createReducer(
@@ -46,6 +44,18 @@ export const appReducer = createReducer(
       ...state,
       userId: payload.userId
     };
+  }),
+  on(fromRoot.updateScanning, (state, payload) => {
+    return {
+      ...state,
+      isScanning: payload.isScanning
+    };
+  }),
+  on(fromRoot.updateQRLoading, (state, payload) => {
+    return {
+      ...state,
+      loading: payload.loading
+    };
   })
 );
 
@@ -59,4 +69,14 @@ export const selectUserId = createSelector(
 export const selectGeolocation = createSelector(
   selectApp,
   (state: AppState) => state.geolocation
+);
+
+export const selectIsScanning = createSelector(
+  selectApp,
+  (state: AppState) => state.isScanning
+);
+
+export const selectLoading = createSelector(
+  selectApp,
+  (state: AppState) => state.loading
 );

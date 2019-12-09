@@ -22,18 +22,6 @@ export class GeolocationService {
 
   initGeoLocation() {
     return from(this.geolocation.getCurrentPosition());
-    // .then(resp => {
-    //   console.log("ngOnInit Gelocation Service");
-    //   console.log(resp.coords.latitude);
-    //   console.log(resp.coords.longitude);
-    //   this.geoLocation$.next({
-    //     longitude: resp.coords.longitude,
-    //     latitude: resp.coords.latitude
-    //   });
-    // })
-    // .catch(error => {
-    //   console.log("Error getting location", error);
-    // });
   }
 
   getLocation$() {

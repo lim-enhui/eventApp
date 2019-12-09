@@ -12,50 +12,56 @@
 </ion-header>
 
 <ion-content>
-  <div
-    *ngFor="let user of user$ | async"
-    class="ion-margin-start ion-margin-end"
-  >
-    <ion-item lines="full">
-      <ion-avatar slot="start" class="ion-margin-top">
-        <ion-img [src]="user.picture.large"></ion-img>
-      </ion-avatar>
-      <ion-label class="ion-padding-top ion-padding-start">
-        <h2>{{ user.name?.first }} {{ user.name?.last }}</h2>
-        <p>{{ user.email }}</p>
-        <div class="ion-padding-top ion-padding-bottom location">
-          <ion-icon
-            name="pin"
-            slot="start"
-            class="ion-padding-end sm"
-          ></ion-icon>
-          <h5>{{ user.location.city }}, {{ user.location.street }}</h5>
-        </div>
-      </ion-label>
-    </ion-item>
+  <ion-item lines="full" class="is-flex">
+    <ion-avatar
+      slot="start"
+      class="is-flex ion-align-self-start ion-margin-top"
+    >
+      <ion-img [src]="userImage"></ion-img>
+    </ion-avatar>
+    <ion-label>
+      <ion-item lines="none">
+        <ion-label class="ion-text-wrap">
+          <h5>{{ userDisplayName }}</h5>
+        </ion-label>
+        <ion-icon name="person" slot="start"></ion-icon>
+      </ion-item>
+      <ion-item lines="none">
+        <ion-label class="ion-text-wrap">
+          <h5>{{ userEmail}}</h5>
+        </ion-label>
+        <ion-icon name="mail" slot="start"></ion-icon>
+      </ion-item>
+      <ion-item lines="none">
+        <ion-label class="ion-text-wrap">
+          <h5>{{ userAtLocation }}</h5>
+        </ion-label>
+        <ion-icon name="pin" slot="start"></ion-icon>
+      </ion-item>
+    </ion-label>
+  </ion-item>
 
-    <ion-list>
-      <ion-list-header class="ion-margin-end">
-        <h2>All Activities</h2>
-      </ion-list-header>
-      <ion-item>
-        <ion-label>
-          <h2>Event Name</h2>
-          <p>Event Location</p>
-          <p>Event time and date</p>
-        </ion-label>
-        <ion-icon name="pricetag" slot="end"></ion-icon>
-      </ion-item>
-      <ion-item>
-        <ion-label>
-          <h2>Event Name</h2>
-          <p>Event Location</p>
-          <p>Event time and date</p>
-        </ion-label>
-        <ion-icon name="pricetag" slot="end"></ion-icon>
-      </ion-item>
-    </ion-list>
-  </div>
+  <ion-list>
+    <ion-list-header class="ion-margin-end">
+      <h2>All Activities</h2>
+    </ion-list-header>
+    <ion-item>
+      <ion-label>
+        <h2>Event Name</h2>
+        <p>Event Location</p>
+        <p>Event time and date</p>
+      </ion-label>
+      <ion-icon name="pricetag" slot="end"></ion-icon>
+    </ion-item>
+    <ion-item>
+      <ion-label>
+        <h2>Event Name</h2>
+        <p>Event Location</p>
+        <p>Event time and date</p>
+      </ion-label>
+      <ion-icon name="pricetag" slot="end"></ion-icon>
+    </ion-item>
+  </ion-list>
   <ion-fab vertical="bottom" horizontal="end" slot="fixed" class="ion-margin">
     <ion-fab-button (click)="presentModal()">
       <ion-icon name="barcode"></ion-icon>

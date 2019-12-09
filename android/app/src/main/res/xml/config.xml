@@ -59,5 +59,9 @@
     <param name="onload" value="true"/>
   </feature>
 
+  <feature name="SocialSharing">
+    <param name="android-package" value="nl.xservices.plugins.SocialSharing"/>
+  </feature>
+
   
 </widget>

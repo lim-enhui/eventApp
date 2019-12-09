@@ -13,49 +13,50 @@
       style="height: 100%; flex-direction: column"
     >
       <ion-spinner name="crescent"></ion-spinner>
-      Loading Content...
+      <p>Loading Content...</p>
     </ion-row>
   </ion-grid>
 
   <ng-template #showContent>
     <ion-virtual-scroll
-      [items]="fakeFiles"
+      [items]="itemFiles"
       approxItemHeight="52px"
       class="ion-margin-bottom"
     >
-      <div class="ion-margin-end" *virtualItem="let files">
-        <ion-list-header class="ion-margin-top">
-          <ion-label
-            >{{ files.date == currentDate.toDateString() ? "Today" : files.date
-            == yesterdayDate.toDateString() ? "Yesterday" : files.date
-            }}</ion-label
+      <div class="ion-margin-end" *virtualItem="let item">
+        <ion-item-sliding>
+          <ion-item
+            detail
+            class="padding inner top bottom end md"
+            (click)="openItem(item)"
           >
-        </ion-list-header>
-
-        <div *ngFor="let item of files.items">
-          <ion-item-sliding>
-            <ion-item
-              detail
-              class="padding inner top bottom end md"
-              (click)="openItem(item)"
+            <ion-icon [name]="iconType(item.type)" slot="start"></ion-icon>
+            <ion-label>
+              {{ item.name }}
+            </ion-label>
+          </ion-item>
+          <ion-item-options side="end">
+            <ion-item-option
+              expandable="true"
+              (click)="presentActionSheet()"
+              color="primary"
             >
-              <ion-icon [name]="iconType(item.type)" slot="start"></ion-icon>
-              <ion-label>
-                {{ item.name }}
-              </ion-label>
-            </ion-item>
-            <ion-item-options side="end">
-              <ion-item-option
-                expandable="true"
-                (click)="delete()"
-                color="danger"
-              >
-                <ion-icon slot="top" size="large" name="trash"></ion-icon>
-                <small>Delete</small>
-              </ion-item-option>
-            </ion-item-options>
-          </ion-item-sliding>
-        </div>
+              <ion-icon slot="top" size="large" name="share"></ion-icon>
+              <small>Share</small>
+            </ion-item-option>
+            <ion-item-option
+              expandable="true"
+              (click)="delete()"
+              color="danger"
+            >
+              <ion-icon slot="top" size="large" name="trash"></ion-icon>
+              <small>Delete</small>
+            </ion-item-option>
+          </ion-item-options>
+        </ion-item-sliding>
+        <!-- <div *ngFor="let item of files">
+
+        </div> -->
       </div>
     </ion-virtual-scroll>
   </ng-template>

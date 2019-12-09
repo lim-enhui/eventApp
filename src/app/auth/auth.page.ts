@@ -1,9 +1,5 @@
 import { Component, OnInit } from "@angular/core";
 import { Observable } from "rxjs";
-import {
-  AngularFirestore,
-  AngularFirestoreDocument
-} from "@angular/fire/firestore";
 
 import { Platform } from "@ionic/angular";
 import { NgForm } from "@angular/forms";

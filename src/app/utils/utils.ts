@@ -1,3 +1,9 @@
-import { messagesJoin } from "./join.utils";
+import { messagesJoin, itemsJoin } from "./join.utils";
 
-export { messagesJoin };
+export function sleeper(ms) {
+  return function(x) {
+    return new Promise(resolve => setTimeout(() => resolve(x), ms));
+  };
+}
+
+export { messagesJoin, itemsJoin };

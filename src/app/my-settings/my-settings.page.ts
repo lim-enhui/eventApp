@@ -22,6 +22,8 @@ export class MySettingsPage implements OnInit {
   public userPhoneNumber: number | string;
   public userEmail: string;
   public userIsSearchable: boolean = false;
+  public userOccupation: string;
+  public userCompanySchool: string;
 
   constructor(
     private afs: AngularFirestore,
@@ -51,11 +53,20 @@ export class MySettingsPage implements OnInit {
           });
 
         this.userDoc.valueChanges().subscribe(userData => {
-          const { displayName, phoneNumber, photoUrl, email } = userData;
+          const {
+            displayName,
+            phoneNumber,
+            photoUrl,
+            email,
+            occupation,
+            company_school
+          } = userData;
           this.userImage = photoUrl;
           this.userDisplayName = displayName;
           this.userPhoneNumber = phoneNumber;
           this.userEmail = email;
+          this.userCompanySchool = company_school;
+          this.userOccupation = occupation;
         });
       });
   }
@@ -91,21 +102,6 @@ export class MySettingsPage implements OnInit {
     console.log(event.detail.checked);
     console.log(this.uid);
     this.userIsSearchable = event.detail.checked;
-    // if (event.detail.checked) {
-    //   this.userDoc
-    //     .valueChanges()
-    //     .pipe(
-    //       map(data => {
-    //         const { displayName, photoUrl, uid } = data;
-    //         return { displayName, photoUrl, uid };
-    //       })
-    //     )
-    //     .subscribe(userData => {
-    //       this.searchUserDoc.set(userData);
-    //     });
-    // } else {
-    //   this.searchUserDoc.delete();
-    // }
   }
 
   onSave() {
@@ -114,6 +110,21 @@ export class MySettingsPage implements OnInit {
     console.log("userEmail", this.userEmail);
     console.log("userIsSearchable", this.userIsSearchable);
 
+    if (this.userIsSearchable) {
+      this.userDoc
+        .valueChanges()
+        .pipe(
+          map(data => {
+            const { displayName, photoUrl, uid } = data;
+            return { displayName, photoUrl, uid };
+          })
+        )
+        .subscribe(userData => {
+          this.searchUserDoc.set(userData);
+        });
+    } else {
+      this.searchUserDoc.delete();
+    }
     // update user
     // update search
   }

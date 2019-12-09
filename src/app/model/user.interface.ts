@@ -5,4 +5,6 @@ export interface IUser {
   email: string;
   isSearchable: boolean;
   phoneNumber?: number | null | string;
+  company_school?: string;
+  occupation?: string;
 }

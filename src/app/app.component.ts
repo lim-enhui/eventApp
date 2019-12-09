@@ -5,10 +5,10 @@ import { SplashScreen } from "@ionic-native/splash-screen/ngx";
 import { StatusBar } from "@ionic-native/status-bar/ngx";
 
 import { AuthService } from "./auth/auth.service";
-import { GeolocationService } from "./shared/geolocation.service";
 import { Store } from "@ngrx/store";
 
 import * as fromAppActions from "./store/app.actions";
+import * as fromAppReducer from "./store/app.reducer";
 
 @Component({
   selector: "app-root",
@@ -16,13 +16,12 @@ import * as fromAppActions from "./store/app.actions";
 })
 export class AppComponent implements OnInit {
   constructor(
-    private store: Store<any>,
+    private store: Store<fromAppReducer.AppState>,
     private platform: Platform,
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
     public auth: AuthService,
-    private menuController: MenuController,
-    private geolocationService: GeolocationService
+    private menuController: MenuController
   ) {
     this.initializeApp();
   }

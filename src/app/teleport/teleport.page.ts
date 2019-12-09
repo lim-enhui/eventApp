@@ -1,5 +1,4 @@
 import { Component, OnInit } from "@angular/core";
-import { GeolocationService } from "../shared/geolocation.service";
 
 import { Store, select } from "@ngrx/store";
 import * as fromAppReducer from "../store/app.reducer";
@@ -19,10 +18,7 @@ export class TeleportPage implements OnInit {
 
   public geolocation$: Observable<any>;
 
-  constructor(
-    private geolocationService: GeolocationService,
-    private store: Store<fromAppReducer.AppState>
-  ) {}
+  constructor(private store: Store<fromAppReducer.AppState>) {}
 
   ngOnInit() {
     this.geolocation$ = this.store.pipe(

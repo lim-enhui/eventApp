@@ -37,12 +37,31 @@
       ></ion-input>
     </ion-item>
     <ion-item>
-      <ion-label position="stacked">Email</ion-label>
+      <ion-label position="stacked">Occupation</ion-label>
+      <ion-input
+        [value]="userOccupation"
+        (ionChange)="updateInput($event, 'userOccupation')"
+      ></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Company/School</ion-label>
+      <ion-input
+        [value]="userCompanySchool"
+        (ionChange)="updateInput($event, 'userCompanySchool')"
+      ></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Displayed Email</ion-label>
       <ion-input
         [value]="userEmail"
         (ionChange)="updateInput($event, 'userEmail')"
       ></ion-input>
     </ion-item>
+    <ion-item-divider color="medium">
+      <ion-label>
+        Control Your Profile
+      </ion-label>
+    </ion-item-divider>
     <ion-item>
       <ion-label>Searchable</ion-label>
       <ion-toggle

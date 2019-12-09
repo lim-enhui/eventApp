@@ -1,4 +1,4 @@
 export interface IGeoLocation {
-  longitude: number;
-  latitude: number;
+  longitude: number | null;
+  latitude: number | null;
 }

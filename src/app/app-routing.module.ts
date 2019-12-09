@@ -40,7 +40,8 @@ const routes: Routes = [
   {
     path: "my-settings",
     loadChildren: "./my-settings/my-settings.module#MySettingsPageModule"
-  }
+  },
+  { path: 'create-new-item', loadChildren: './create-new-item/create-new-item.module#CreateNewItemPageModule' }
 ];
 
 @NgModule({
