@@ -6,4 +6,5 @@
     <string name="custom_url_scheme">io.ionic.starter</string>
     <string name="fb_app_id">802511666787825</string>
     <string name="fb_app_name">eventApp</string>
+    <string name="activity_name">eventApp</string>
 </resources>

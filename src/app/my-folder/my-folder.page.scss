@@ -16,3 +16,8 @@ ion-spinner * {
   stroke: #444;
   fill: #222;
 }
+
+.loading-width .extent-content {
+  --min-width: 80%;
+  --width: 80%;
+}

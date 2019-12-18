@@ -1,9 +1,125 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>create-new-item</ion-title>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content padding>
+  <!-- Scrollable Segment -->
+  <ion-segment (ionChange)="segmentChanged($event)">
+    <ion-segment-button value="image" checked>
+      <ion-icon name="image"></ion-icon>
+      <ion-label>Image</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="document">
+      <ion-icon name="document"></ion-icon>
+      <ion-label>Document</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="play">
+      <ion-icon name="play"></ion-icon>
+      <ion-label>Youtube</ion-label>
+    </ion-segment-button>
+  </ion-segment>
 
+  <form
+    *ngIf="showImageFormControl"
+    [formGroup]="createImageForm"
+    (ngSubmit)="onImageFormSubmit()"
+  >
+    <div style="display: flex; align-items: flex-end; flex-direction: column;">
+      <ion-img
+        [src]="createImageForm.get('filePath').valid ? selectedViewImage : defaultViewImage"
+      ></ion-img>
+      <ion-fab edge slot="fixed" style="top: -28px; margin-right: 16px;">
+        <ion-fab-button (click)="openCamera()">
+          <ion-icon name="camera"></ion-icon>
+        </ion-fab-button>
+      </ion-fab>
+    </div>
+
+    <ion-item>
+      <ion-label position="floating">Item Name</ion-label>
+      <ion-input
+        type="text"
+        placeholder="Enter Image Name"
+        id="name"
+        formControlName="name"
+      ></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Insert Image File</ion-label>
+      <ion-icon
+        size="medium"
+        class="input-icon"
+        name="attach"
+        slot="end"
+        (click)="openPhotoAlbum()"
+      ></ion-icon>
+      <ion-input
+        readonly
+        placeholder="Add Image"
+        (ionFocus)="openPhotoAlbum()"
+        formControlName="filePath"
+      ></ion-input>
+    </ion-item>
+
+    <ion-button
+      expand="block"
+      fill="outline"
+      class="ion-padding"
+      [disabled]="!createImageForm.valid"
+      size="large"
+      type="submit"
+    >
+      Submit
+    </ion-button>
+  </form>
+
+  <form
+    *ngIf="showDocumentFormControl"
+    [formGroup]="createDocumentForm"
+    (ngSubmit)="onDocumentFormSubmit()"
+  >
+    <ion-item>
+      <ion-label position="floating">Item Name</ion-label>
+      <ion-input
+        type="text"
+        placeholder="Enter Image Name"
+        id="name"
+        formControlName="name"
+      ></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating"
+        >Supported Format (ppt, pdf) only</ion-label
+      >
+      <ion-icon
+        size="medium"
+        class="input-icon"
+        name="attach"
+        slot="end"
+        (click)="attachDocumentFile()"
+      ></ion-icon>
+      <ion-input
+        readonly
+        placeholder="Add Document"
+        (ionFocus)="attachDocumentFile()"
+        formControlName="filePath"
+      ></ion-input>
+    </ion-item>
+
+    <ion-button
+      expand="block"
+      fill="outline"
+      class="ion-padding"
+      [disabled]="!createDocumentForm.valid"
+      size="large"
+      type="submit"
+    >
+      Submit
+    </ion-button>
+  </form>
+  <div *ngIf="showYoutubeFormControl">YOUTUBE CONTROL</div>
 </ion-content>

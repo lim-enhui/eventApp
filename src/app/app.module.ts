@@ -6,6 +6,7 @@ import { AngularFireModule } from "@angular/fire";
 import { AngularFireAuthModule } from "@angular/fire/auth";
 import { AngularFireStorageModule } from "@angular/fire/storage";
 import { AngularFirestoreModule } from "@angular/fire/firestore";
+import { AngularFireDatabaseModule } from "@angular/fire/database";
 
 import { Facebook } from "@ionic-native/facebook/ngx";
 
@@ -21,6 +22,8 @@ import { File } from "@ionic-native/file/ngx";
 import { FileChooser } from "@ionic-native/file-chooser/ngx";
 import { Geolocation } from "@ionic-native/geolocation/ngx";
 import { SocialSharing } from "@ionic-native/social-sharing/ngx";
+import { YoutubeVideoPlayer } from "@ionic-native/youtube-video-player/ngx";
+import { Camera } from "@ionic-native/camera/ngx";
 
 import { AppComponent } from "./app.component";
 import { AppRoutingModule } from "./app-routing.module";
@@ -57,7 +60,8 @@ const firebaseConfig = {
     AngularFireModule.initializeApp(firebaseConfig),
     AngularFireAuthModule,
     AngularFirestoreModule,
-    AngularFireStorageModule
+    AngularFireStorageModule,
+    AngularFireDatabaseModule
   ],
   providers: [
     StatusBar,
@@ -73,6 +77,8 @@ const firebaseConfig = {
     CallNumber,
     Geolocation,
     SocialSharing,
+    YoutubeVideoPlayer,
+    Camera,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

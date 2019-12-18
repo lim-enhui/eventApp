@@ -4,12 +4,14 @@ import {
   LoadingController,
   ToastController,
   ActionSheetController,
-  ModalController
+  ModalController,
+  NavController
 } from "@ionic/angular";
 
 import { AngularFireStorage } from "@angular/fire/storage";
 
 import { FileOpener } from "@ionic-native/file-opener/ngx";
+import { YoutubeVideoPlayer } from "@ionic-native/youtube-video-player/ngx";
 
 import {
   FileTransfer,
@@ -43,7 +45,7 @@ export class MyFolderPage implements OnInit {
   fileTransfer: FileTransferObject = this.transfer.create();
 
   constructor(
-    public loadingController: LoadingController,
+    private loadingController: LoadingController,
     private storage: AngularFireStorage,
     private fileOpener: FileOpener,
     private transfer: FileTransfer,
@@ -53,7 +55,9 @@ export class MyFolderPage implements OnInit {
     private store: Store<fromAppReducer.AppState>,
     private actionSheetController: ActionSheetController,
     public modalController: ModalController,
-    private socialSharing: SocialSharing
+    private socialSharing: SocialSharing,
+    private youtube: YoutubeVideoPlayer,
+    private navController: NavController
   ) {
     this.yesterdayDate.setDate(this.currentDate.getDate() - 1);
   }
@@ -95,15 +99,11 @@ export class MyFolderPage implements OnInit {
 
   iconType(type) {
     switch (type) {
-      case "png":
-      case "jpeg":
-      case "jpg":
-      case "gif":
+      case "image":
         return "image";
-      case "pdf":
+      case "document":
         return "document";
-      case "ppt":
-      case "pptx":
+      case "powerpoint":
         return "easel";
       default:
         return "play";
@@ -111,13 +111,17 @@ export class MyFolderPage implements OnInit {
   }
 
   async dlOpenImageFile(item) {
-    const ref = this.storage.ref(`${item.name}_${item.createdAt}.${item.type}`);
+    console.log(item);
+    const ref = this.storage.ref(
+      `${item.name}_${item.createdAt}.${item.format}`
+    );
     const uri = await ref.getDownloadURL().toPromise();
 
     this.fileTransfer
       .download(
         uri,
-        this.file.dataDirectory + `${item.name}_${item.createdAt}.${item.type}`
+        this.file.dataDirectory +
+          `${item.name}_${item.createdAt}.${item.format}`
       )
       .then(
         entry => {
@@ -136,13 +140,16 @@ export class MyFolderPage implements OnInit {
   }
 
   async dlOpenPdfFile(item) {
-    const ref = this.storage.ref(`${item.name}_${item.createdAt}.${item.type}`);
+    const ref = this.storage.ref(
+      `${item.name}_${item.createdAt}.${item.format}`
+    );
     const uri = await ref.getDownloadURL().toPromise();
 
     this.fileTransfer
       .download(
         uri,
-        this.file.dataDirectory + `${item.name}_${item.createdAt}.${item.type}`
+        this.file.dataDirectory +
+          `${item.name}_${item.createdAt}.${item.format}`
       )
       .then(
         entry => {
@@ -160,24 +167,38 @@ export class MyFolderPage implements OnInit {
       );
   }
 
+  async presentLoading() {
+    const loading = await this.loadingController.create({
+      spinner: "circular",
+      duration: 3000,
+      message: "Loading Content. Please wait...",
+      translucent: true,
+      cssClass: "loading-width extent-content"
+    });
+    return await loading.present();
+  }
+
+  openYoutubeApp(item) {
+    this.youtube.openVideo(item.value);
+  }
+
   openItem(item) {
     console.log(item);
     switch (item.type) {
-      case "ppt":
-      case "pptx":
+      case "powerpoint":
         this.presentToast(true);
         this.dlOpenPptxFile(item);
         break;
-      case "pdf":
+      case "document":
         this.presentToast(true);
         this.dlOpenPdfFile(item);
         break;
-      case "jpg":
-      case "jpeg":
-      case "png":
-      case "gif":
+      case "image":
         this.presentToast(true);
         this.dlOpenImageFile(item);
+        break;
+      case "youtube":
+        this.openYoutubeApp(item);
         break;
       default:
         this.presentToast(false);
@@ -188,10 +209,11 @@ export class MyFolderPage implements OnInit {
     let toast;
 
     if (supported) {
-      toast = await this.toastController.create({
-        message: "Loading Content. Please wait.",
-        duration: 2000
-      });
+      // toast = await this.toastController.create({
+      //   message: "Loading Content. Please wait.",
+      //   duration: 2000
+      // });
+      this.presentLoading();
     } else {
       toast = await this.toastController.create({
         header: "Error",
@@ -213,13 +235,16 @@ export class MyFolderPage implements OnInit {
   }
 
   async dlOpenPptxFile(item) {
-    const ref = this.storage.ref(`${item.name}_${item.createdAt}.${item.type}`);
+    const ref = this.storage.ref(
+      `${item.name}_${item.createdAt}.${item.format}`
+    );
     const uri = await ref.getDownloadURL().toPromise();
 
     this.fileTransfer
       .download(
         uri,
-        this.file.dataDirectory + `${item.name}_${item.createdAt}.${item.type}`
+        this.file.dataDirectory +
+          `${item.name}_${item.createdAt}.${item.format}`
       )
       .then(
         entry => {
@@ -238,6 +263,10 @@ export class MyFolderPage implements OnInit {
           throw Error("Unable to download file.");
         }
       );
+  }
+
+  navigatePush(page) {
+    this.navController.navigateForward("/" + page);
   }
 
   async presentModal() {
