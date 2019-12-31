@@ -75,7 +75,13 @@ export class UserPage implements OnInit {
 
   async presentModal() {
     const modal = await this.modalController.create({
-      component: QrCodePage
+      component: QrCodePage,
+      componentProps: {
+        item: {
+          id: this.userId,
+          type: "contact"
+        }
+      }
     });
     return await modal.present();
   }

@@ -18,7 +18,7 @@ export const itemsJoin = (afs: AngularFirestore) => {
                   .pipe(
                     map(actions => {
                       const id = actions.payload.id;
-                      const data = actions.payload.data();
+                      const data: any = actions.payload.data();
                       return { id, ...data };
                     })
                   )
@@ -53,7 +53,7 @@ export const messagesJoin = (afs: AngularFirestore) => {
                   .pipe(
                     map(actions => {
                       const id = actions.payload.id;
-                      const data = actions.payload.data();
+                      const data: any = actions.payload.data();
                       return { id, ...data };
                     })
                   )

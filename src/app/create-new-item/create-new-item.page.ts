@@ -1,18 +1,23 @@
 import { Component, OnInit } from "@angular/core";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
-import { Camera, CameraOptions } from "@ionic-native/camera/ngx";
 
 import { AngularFirestore } from "@angular/fire/firestore";
-import { Capacitor, Filesystem } from "@capacitor/core";
 import { Store, select } from "@ngrx/store";
-import { FileChooser } from "@ionic-native/file-chooser/ngx";
 import * as fromAppReducer from "../store/app.reducer";
 import * as firebase from "firebase";
+import { NativeHelpersService } from "../shared/native-helpers.service";
+import { LoadingController, ToastController } from "@ionic/angular";
 
 enum FormTypeControl {
   DOCUMENT = "document",
   IMAGE = "image",
   YOUTUBE = "play"
+}
+
+enum DocumentFormatControl {
+  PDF = "pdf",
+  PPT = "ppt",
+  PPTX = "pptx"
 }
 
 @Component({
@@ -23,20 +28,26 @@ enum FormTypeControl {
 export class CreateNewItemPage implements OnInit {
   public createImageForm: FormGroup;
   public createDocumentForm: FormGroup;
+  public createYoutubeLinkForm: FormGroup;
   public userId: string;
   public selectedViewImage: string;
   public selectedImageFile: string;
+  public selectedImageFileFormat: string;
+  public selectedDocumentFile: string;
+  public selectedDocumentFileFormat: string;
   public defaultViewImage: string = "assets/img/default.jpg";
   public dateLog: number = Date.now();
   public showImageFormControl: boolean = true;
   public showDocumentFormControl: boolean = false;
   public showYoutubeFormControl: boolean = false;
+  public isLoading: HTMLIonLoadingElement;
 
   constructor(
-    private camera: Camera,
+    public loadingController: LoadingController,
     private afs: AngularFirestore,
+    private toastController: ToastController,
     private store: Store<fromAppReducer.AppState>,
-    private fileChooser: FileChooser
+    private nativeHelpersService: NativeHelpersService
   ) {}
 
   ngOnInit() {
@@ -52,6 +63,11 @@ export class CreateNewItemPage implements OnInit {
     this.createDocumentForm = new FormGroup({
       name: new FormControl(null, Validators.required),
       filePath: new FormControl(null, Validators.required)
+    });
+
+    this.createYoutubeLinkForm = new FormGroup({
+      name: new FormControl(null, Validators.required),
+      url: new FormControl(null, Validators.required)
     });
   }
 
@@ -81,129 +97,210 @@ export class CreateNewItemPage implements OnInit {
     }
   }
 
-  async onImageFormSubmit() {
-    let blobInfo: any = await this.makeFileIntoBlob(this.selectedImageFile);
+  async presentLoading() {
+    this.isLoading = await this.loadingController.create({
+      message: "Uploading File..."
+    });
+    await this.isLoading.present();
+  }
+
+  async uploadTask(blobInfo: { fileBlob: Blob }) {
+    let _uploadFileName;
+    let _name;
+    let _type;
+    let _format;
+    if (this.showImageFormControl) {
+      _uploadFileName =
+        this.createImageForm.get("name").value +
+        "_" +
+        this.dateLog +
+        "." +
+        this.selectedImageFileFormat;
+
+      _name = this.createImageForm.get("name").value;
+      _type = "image";
+      _format = this.selectedImageFileFormat;
+    } else if (this.showDocumentFormControl) {
+      _uploadFileName =
+        this.createDocumentForm.get("name").value +
+        "_" +
+        this.dateLog +
+        "." +
+        this.selectedDocumentFileFormat;
+
+      _name = this.createDocumentForm.get("name").value;
+      _format = this.selectedDocumentFileFormat;
+
+      if (
+        this.selectedDocumentFileFormat === DocumentFormatControl.PPT ||
+        this.selectedDocumentFileFormat === DocumentFormatControl.PPTX
+      ) {
+        _type = "powerpoint";
+      } else {
+        _type = "document";
+      }
+    } else {
+      return;
+    }
 
     let uploadTask = await firebase
       .storage()
       .ref()
-      .child(`${blobInfo.fileName}`)
-      .put(blobInfo.imgBlob);
+      .child(`${_uploadFileName}`)
+      .put(blobInfo.fileBlob);
 
-    let imgSrc = await uploadTask.ref.getDownloadURL();
+    let uri = await uploadTask.ref.getDownloadURL();
 
+    this.uploadForm(_format, _name, _type, uri);
+  }
+
+  async uploadForm(_format, _name, _type, _url, _value = "") {
     this.afs
       .collection("item")
       .add({
         createdAt: this.dateLog,
-        format: "jpeg",
-        name: this.createImageForm.get("name").value,
-        type: "image",
-        url: imgSrc
+        format: _format,
+        name: _name,
+        type: _type,
+        url: _url,
+        value: _value
       })
       .then(doc => {
         console.log(doc.id);
-        this.afs.doc(`users/${this.userId}/private/inventory`).update({
-          items: firebase.firestore.FieldValue.arrayUnion(doc.id)
-        });
-        // .set({ items: [doc.id] }, { merge: true });
+        this.afs.firestore
+          .doc(`users/${this.userId}/private/inventory`)
+          .get()
+          .then(docSnapshot => {
+            if (docSnapshot.exists) {
+              this.afs.doc(`users/${this.userId}/private/inventory`).update({
+                items: firebase.firestore.FieldValue.arrayUnion(doc.id)
+              });
+            } else {
+              this.afs.doc(`users/${this.userId}/private/inventory`).set({
+                items: firebase.firestore.FieldValue.arrayUnion(doc.id)
+              });
+            }
+            this.isLoading.dismiss();
+          });
+        this.uploadComplete();
       });
   }
 
-  async onDocumentFormSubmit() {}
+  async uploadComplete() {
+    let toast = await this.toastController.create({
+      message: "Content Uploaded.",
+      duration: 2000
+    });
+
+    toast.present();
+
+    if (this.showDocumentFormControl) {
+      this.createDocumentForm.reset();
+    } else if (this.showYoutubeFormControl) {
+      this.createYoutubeLinkForm.reset();
+    } else {
+      this.createImageForm.reset();
+    }
+  }
+
+  async onImageFormSubmit() {
+    this.presentLoading();
+    let getFilePath = this.createImageForm.get("filePath").value;
+
+    let fileExtension = getFilePath.split(".").pop();
+    this.selectedImageFileFormat = fileExtension.split("?")[0];
+
+    let blobInfo: {
+      fileBlob: Blob;
+    } = await this.nativeHelpersService.makeFileIntoBlob(
+      this.selectedImageFile
+    );
+
+    this.uploadTask(blobInfo);
+  }
+
+  async onDocumentFormSubmit() {
+    this.presentLoading();
+    let getFilePath = this.createDocumentForm.get("filePath").value;
+    let fileExtension = getFilePath.split(".").pop();
+    this.selectedDocumentFileFormat = fileExtension.split("?")[0];
+
+    let blobInfo: {
+      fileBlob: Blob;
+    } = await this.nativeHelpersService.makeFileIntoBlob(
+      this.selectedDocumentFile
+    );
+
+    this.uploadTask(blobInfo);
+  }
 
   async openCamera() {
-    const options: CameraOptions = {
-      quality: 70,
-      destinationType: this.camera.DestinationType.FILE_URI,
-      encodingType: this.camera.EncodingType.JPEG,
-      mediaType: this.camera.MediaType.PICTURE
-    };
+    let {
+      selectedImageFile,
+      selectedViewImage
+    } = await this.nativeHelpersService.openCamera();
 
-    this.selectedImageFile = await this.camera.getPicture(options);
-
-    this.selectedViewImage = Capacitor.convertFileSrc(this.selectedImageFile);
+    this.selectedViewImage = selectedViewImage;
+    this.selectedImageFile = selectedImageFile;
 
     this.createImageForm.patchValue({
-      filePath: this.selectedImageFile
+      filePath: selectedImageFile.replace(/^.*[\\\/]/, "")
     });
   }
 
   async attachImageFile() {
-    try {
-      const options: CameraOptions = {
-        quality: 80,
-        destinationType: this.camera.DestinationType.FILE_URI,
-        encodingType: this.camera.EncodingType.JPEG,
-        mediaType: this.camera.MediaType.ALLMEDIA,
-        sourceType: this.camera.PictureSourceType.PHOTOLIBRARY
-      };
+    let {
+      selectedImageFile,
+      selectedViewImage
+    } = await this.nativeHelpersService.attachImageFile();
 
-      this.selectedImageFile = await this.camera.getPicture(options);
+    this.selectedViewImage = selectedViewImage;
+    this.selectedImageFile = selectedImageFile;
 
-      this.selectedViewImage = Capacitor.convertFileSrc(this.selectedImageFile);
-
-      this.createImageForm.patchValue({
-        filePath: this.selectedImageFile
-      });
-    } catch (e) {
-      console.log(e.message);
-      alert("File Upload Error " + e.message);
-    }
+    this.createImageForm.patchValue({
+      filePath: selectedImageFile.replace(/^.*[\\\/]/, "")
+    });
   }
 
   async attachDocumentFile() {
-    this.fileChooser
-      .open({
-        mime: "application/pdf"
-      })
-      .then(uri => this.readFilePath(uri))
-      .catch(e => console.log(e));
-  }
+    let {
+      selectedDocumentFile
+    } = await this.nativeHelpersService.attachDocumentFile(
+      "application/vnd.openxmlformats-officedocument.presentationml.presentation,application/pdf,application/vnd.ms-powerpoint"
+    );
 
-  async readFilePath(uri) {
-    // Here's an example of reading a file with a full file path. Use this to
-    // read binary data (base64 encoded) from plugins that return File URIs, such as
-    // the Camera.
-    console.log("uri", uri);
-    try {
-      let data = await Filesystem.readFile({
-        path: uri
-      });
-      console.log(data);
-    } catch (e) {
-      console.error("Unable to read file", e);
-    }
-  }
-
-  async stat(file) {
-    try {
-      let ret = await Filesystem.stat({
-        path: file
-      });
-      console.log(ret);
-    } catch (e) {
-      console.error("Unable to stat file", e);
-    }
-  }
-
-  makeFileIntoBlob(_imagePath) {
-    // INSTALL PLUGIN - cordova plugin add cordova-plugin-file
-    return new Promise(async (resolve, reject) => {
-      let fileName = "";
-      const webSafePhoto = Capacitor.convertFileSrc(_imagePath);
-
-      const response = await fetch(webSafePhoto);
-
-      const imgBlob = await response.blob();
-
-      fileName =
-        this.createImageForm.get("name").value + "_" + this.dateLog + ".jpeg";
-
-      resolve({
-        fileName,
-        imgBlob
-      });
+    this.selectedDocumentFile = selectedDocumentFile;
+    this.createDocumentForm.patchValue({
+      filePath: this.selectedDocumentFile.replace(/^.*[\\\/]/, "")
     });
+  }
+
+  isYoutubeLink(url): { stat?: boolean; id?: string } {
+    var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
+    var match = url.match(regExp);
+    return match && match[7].length == 11
+      ? { stat: true, id: match[7] }
+      : { stat: false };
+  }
+
+  async onYoutubeFormSubmit() {
+    let { stat, id } = this.isYoutubeLink(
+      this.createYoutubeLinkForm.get("url").value
+    );
+
+    const _name = this.createYoutubeLinkForm.get("name").value;
+    let _url = this.createYoutubeLinkForm.get("url").value;
+
+    if (stat) {
+      this.presentLoading();
+      this.uploadForm("link", _name, "youtube", _url, id);
+    } else {
+      let toast = await this.toastController.create({
+        message: "Invalid URL Format.",
+        duration: 2000
+      });
+
+      toast.present();
+    }
   }
 }

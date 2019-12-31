@@ -55,12 +55,12 @@
         class="input-icon"
         name="attach"
         slot="end"
-        (click)="openPhotoAlbum()"
+        (click)="attachImageFile()"
       ></ion-icon>
       <ion-input
         readonly
         placeholder="Add Image"
-        (ionFocus)="openPhotoAlbum()"
+        (ionFocus)="attachImageFile()"
         formControlName="filePath"
       ></ion-input>
     </ion-item>
@@ -121,5 +121,39 @@
       Submit
     </ion-button>
   </form>
-  <div *ngIf="showYoutubeFormControl">YOUTUBE CONTROL</div>
+  <form
+    *ngIf="showYoutubeFormControl"
+    [formGroup]="createYoutubeLinkForm"
+    (ngSubmit)="onYoutubeFormSubmit()"
+  >
+    <ion-item>
+      <ion-label position="floating">Your Item Name</ion-label>
+      <ion-input
+        type="text"
+        placeholder="Enter Item Name"
+        id="name"
+        formControlName="name"
+      ></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Youtube URL</ion-label>
+      <ion-input
+        type="text"
+        placeholder="Enter Youtube Link"
+        id="yt-url"
+        formControlName="url"
+      ></ion-input>
+    </ion-item>
+
+    <ion-button
+      expand="block"
+      fill="outline"
+      class="ion-padding"
+      [disabled]="!createYoutubeLinkForm.valid"
+      size="large"
+      type="submit"
+    >
+      Submit
+    </ion-button>
+  </form>
 </ion-content>

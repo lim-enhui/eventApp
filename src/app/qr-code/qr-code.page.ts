@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
-import { ModalController } from "@ionic/angular";
+import { ModalController, NavParams } from "@ionic/angular";
+import { tryParseJSON } from "../utils/utils";
 
 @Component({
   selector: "app-qr-code",
@@ -7,13 +8,20 @@ import { ModalController } from "@ionic/angular";
   styleUrls: ["./qr-code.page.scss"]
 })
 export class QrCodePage implements OnInit {
-  title = "app";
-  elementType = "url";
-  value = "Techiediaries";
+  //  title = "app";
+  //   elementType = "url";
+  public scannedItem: any;
 
-  constructor(public modalController: ModalController) {}
+  constructor(
+    public modalController: ModalController,
+    private navParams: NavParams
+  ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    console.log(this.navParams);
+    let item = this.navParams.get("item");
+    this.scannedItem = JSON.stringify(item);
+  }
 
   dismiss() {
     // using the injected ModalController this page

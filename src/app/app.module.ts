@@ -1,6 +1,7 @@
 import { NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 import { RouteReuseStrategy } from "@angular/router";
+import { HttpClientModule } from "@angular/common/http";
 
 import { AngularFireModule } from "@angular/fire";
 import { AngularFireAuthModule } from "@angular/fire/auth";
@@ -8,14 +9,13 @@ import { AngularFireStorageModule } from "@angular/fire/storage";
 import { AngularFirestoreModule } from "@angular/fire/firestore";
 import { AngularFireDatabaseModule } from "@angular/fire/database";
 
-import { Facebook } from "@ionic-native/facebook/ngx";
-
 import { IonicModule, IonicRouteStrategy } from "@ionic/angular";
 import { SplashScreen } from "@ionic-native/splash-screen/ngx";
 import { StatusBar } from "@ionic-native/status-bar/ngx";
 import { QRScanner } from "@ionic-native/qr-scanner/ngx";
 import { GooglePlus } from "@ionic-native/google-plus/ngx";
 import { CallNumber } from "@ionic-native/call-number/ngx";
+import { Facebook } from "@ionic-native/facebook/ngx";
 import { FileOpener } from "@ionic-native/file-opener/ngx";
 import { FileTransfer } from "@ionic-native/file-transfer/ngx";
 import { File } from "@ionic-native/file/ngx";
@@ -27,8 +27,9 @@ import { Camera } from "@ionic-native/camera/ngx";
 
 import { AppComponent } from "./app.component";
 import { AppRoutingModule } from "./app-routing.module";
-import { HttpClientModule } from "@angular/common/http";
+
 import { GeolocationService } from "./shared/geolocation.service";
+import { NativeHelpersService } from "./shared/native-helpers.service";
 
 import { StoreModule } from "@ngrx/store";
 import { EffectsModule } from "@ngrx/effects";
@@ -36,6 +37,9 @@ import { StoreDevtoolsModule } from "@ngrx/store-devtools";
 
 import * as fromAppReducer from "./store/app.reducer";
 import { AppEffect } from "./store/app.effects";
+
+import { QrCodePage } from "./qr-code/qr-code.page";
+import { QRCodeModule } from "angularx-qrcode";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDX878vWfnXaGwPKAM_WJ_BgWnwhIv3v20",
@@ -47,8 +51,8 @@ const firebaseConfig = {
 };
 
 @NgModule({
-  declarations: [AppComponent],
-  entryComponents: [],
+  declarations: [AppComponent, QrCodePage],
+  entryComponents: [QrCodePage],
   imports: [
     BrowserModule,
     StoreModule.forRoot({ app: fromAppReducer.appReducer }),
@@ -61,11 +65,13 @@ const firebaseConfig = {
     AngularFireAuthModule,
     AngularFirestoreModule,
     AngularFireStorageModule,
-    AngularFireDatabaseModule
+    AngularFireDatabaseModule,
+    QRCodeModule
   ],
   providers: [
     StatusBar,
     GeolocationService,
+    NativeHelpersService,
     SplashScreen,
     GooglePlus,
     QRScanner,

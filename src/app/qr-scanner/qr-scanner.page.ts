@@ -13,7 +13,13 @@ import { File } from "@ionic-native/file/ngx";
 
 import { Router } from "@angular/router";
 
-import { sleeper } from "../utils/utils";
+import { sleeper, tryParseJSON } from "../utils/utils";
+import { NativeHelpersService } from "../shared/native-helpers.service";
+import { AngularFirestore } from "@angular/fire/firestore";
+import * as firebase from "firebase";
+
+import { Store, select } from "@ngrx/store";
+import * as fromAppReducer from "../store/app.reducer";
 
 @Component({
   selector: "app-qr-scanner",
@@ -21,9 +27,10 @@ import { sleeper } from "../utils/utils";
   styleUrls: ["./qr-scanner.page.scss"]
 })
 export class QrScannerPage implements OnInit {
-  public isOn: boolean = false;
+  public isQRScanning: boolean = false;
   public scannedData: any = {};
   public isLoading: boolean;
+  public userId: string;
 
   // public reInitProcessNextActionSheet: boolean = false;
   public isFlashLightOn: boolean = false;
@@ -34,7 +41,10 @@ export class QrScannerPage implements OnInit {
     private qrScanner: QRScanner,
     private storage: AngularFireStorage,
     public actionSheetController: ActionSheetController,
+    private nativeHelpersService: NativeHelpersService,
+    private store: Store<fromAppReducer.AppState>,
     private router: Router,
+    private afs: AngularFirestore,
     private fileOpener: FileOpener,
     private transfer: FileTransfer,
     private file: File
@@ -52,12 +62,47 @@ export class QrScannerPage implements OnInit {
     );
   }
 
-  async dlOpenImageFile() {
+  async openScannedItem(item) {
     console.log("dispatch loading true and is downloading");
     // this.store.dispatch(fromAppActions.updateQRLoading({ loading: true }));
+    let uri: any;
+    let locale_file;
 
-    const ref = this.storage.ref("test.jpeg");
-    const uri = await ref.getDownloadURL().toPromise();
+    if (item.type !== "youtube") {
+      uri = await this.nativeHelpersService.downloadFileHelper(item);
+      locale_file = uri.toURL();
+    }
+
+    switch (item.type) {
+      case "powerpoint":
+        this.fileOpener
+          .open(
+            locale_file,
+            "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+          )
+          .then(() => console.log("File is opened"))
+          .catch(e => console.log("Error opening file", e));
+        break;
+      case "document":
+        this.fileOpener
+          .open(locale_file, "application/pdf")
+          .then(() => console.log("File is opened"))
+          .catch(e => console.log("Error opening file", e));
+        break;
+      case "image":
+        this.fileOpener
+          .open(locale_file, `image/${item.format}`)
+          .then(() => console.log("File is opened"))
+          .catch(e => console.log("Error opening file", e));
+        break;
+      case "youtube":
+        this.nativeHelpersService.openYoutubeApp(item.value);
+        break;
+      default:
+    }
+
+    // const ref = this.storage.ref("test.jpeg");
+    // const uri = await ref.getDownloadURL().toPromise();
 
     this.fileTransfer
       .download(uri, this.file.dataDirectory + "test.jpeg")
@@ -81,14 +126,14 @@ export class QrScannerPage implements OnInit {
         }
       )
       .then(() => {
-        sleeper(1000);
+        sleeper(2000);
       })
       .then(() => {
-        this.presentProcessNextActionSheet();
+        this.presentProcessNextActionSheet(item);
       });
   }
 
-  async presentProcessNextActionSheet() {
+  async presentProcessNextActionSheet(item) {
     const actionSheet = await this.actionSheetController.create({
       header: "Item Collection",
       backdropDismiss: false,
@@ -98,7 +143,9 @@ export class QrScannerPage implements OnInit {
           icon: "open",
           handler: () => {
             console.log("open clicked");
-            this.dlOpenImageFile();
+            if (item.type !== "contact") {
+              this.openScannedItem(item);
+            }
             actionSheet.dismiss();
           }
         },
@@ -114,12 +161,36 @@ export class QrScannerPage implements OnInit {
           }
         },
         {
-          text: "Add To Collection",
-          icon: "bookmark",
+          text: item.type === "contact" ? "Add Contact" : "Add to Collection",
+          icon: item.type === "contact" ? "contact" : "bookmark",
           handler: () => {
             console.log("Add to Collection clicked");
-            actionSheet.dismiss();
-            this.router.navigateByUrl("/tabs/my-folder");
+            if (item.type !== "contact") {
+              this.afs.doc(`users/${this.userId}/private/inventory`).update({
+                items: firebase.firestore.FieldValue.arrayUnion(item.id)
+              });
+              actionSheet.dismiss();
+              this.router.navigateByUrl("/tabs/my-folder");
+            } else {
+              this.afs.firestore
+                .doc(`users/${this.userId}/private/contacts`)
+                .get()
+                .then(docSnapshot => {
+                  if (docSnapshot.exists) {
+                    this.afs
+                      .doc(`users/${this.userId}/private/contacts`)
+                      .update({
+                        users: firebase.firestore.FieldValue.arrayUnion(item.id)
+                      });
+                  } else {
+                    this.afs.doc(`users/${this.userId}/private/contacts`).set({
+                      users: firebase.firestore.FieldValue.arrayUnion(item.id)
+                    });
+                  }
+
+                  this.router.navigateByUrl("/tabs/home");
+                });
+            }
           }
         },
         {
@@ -135,11 +206,27 @@ export class QrScannerPage implements OnInit {
       ]
     });
 
-    // actionSheet.onDidDismiss().then(() => {
-    //   if (this.reInitProcessNextActionSheet) {
-    //     console.log("open Item");
-    //   }
-    // });
+    await actionSheet.present();
+  }
+
+  async presentScanAgainActionSheet() {
+    const actionSheet = await this.actionSheetController.create({
+      header: "Item Collection",
+      backdropDismiss: false,
+      buttons: [
+        {
+          text: "Rescan",
+          icon: "arrow-dropright-circle",
+          handler: () => {
+            console.log("Rescan clicked");
+            console.log("should scan");
+            actionSheet.dismiss();
+            this.showCamera();
+            this.initQRScanner();
+          }
+        }
+      ]
+    });
 
     await actionSheet.present();
   }
@@ -155,21 +242,29 @@ export class QrScannerPage implements OnInit {
       .prepare()
       .then((status: QRScannerStatus) => {
         if (status.authorized) {
-          this.isOn = true;
+          this.isQRScanning = true;
 
           // start scanning
           const scanSub = this.qrScanner.scan().subscribe((text: string) => {
             console.log("Scanned something", text);
 
-            this.isOn = false;
+            let scannedItem = tryParseJSON(text);
 
-            this.presentProcessNextActionSheet();
+            if (scannedItem === false) {
+              this.presentScanAgainActionSheet();
+            } else {
+              console.log(scannedItem);
 
-            this.qrScanner.hide().then();
-            scanSub.unsubscribe();
+              this.isQRScanning = false;
+
+              this.presentProcessNextActionSheet(scannedItem);
+
+              this.qrScanner.hide();
+              scanSub.unsubscribe();
+            }
           });
 
-          this.qrScanner.show().then();
+          this.qrScanner.show();
         } else if (status.denied) {
           // camera permission was permanently denied
           // you must use QRScanner.openSettings() method to guide the user to the settings page
@@ -182,7 +277,11 @@ export class QrScannerPage implements OnInit {
       .catch((e: any) => console.log("Error is", e));
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.store
+      .pipe(select(fromAppReducer.selectUserId))
+      .subscribe(userId => (this.userId = userId));
+  }
 
   toggleFlashLight() {
     this.isFlashLightOn = !this.isFlashLightOn;

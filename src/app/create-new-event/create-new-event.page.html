@@ -8,6 +8,32 @@
 
 <ion-content padding>
   <form [formGroup]="createEventForm" (ngSubmit)="onSubmit()">
+    <div
+      style="display: flex; align-items: flex-end; flex-direction: column; margin-bottom: 36px;"
+    >
+      <ion-img
+        [src]="createEventForm.get('filePath').value === null ? defaultViewImage : selectedViewImage "
+      ></ion-img>
+      <ion-fab
+        style="position: relative; margin-top: -28px; margin-right: 16px;"
+      >
+        <ion-fab-button (click)="openCamera()">
+          <ion-icon name="camera"></ion-icon>
+        </ion-fab-button>
+      </ion-fab>
+    </div>
+    <div>
+      <ion-button
+        expand="block"
+        size="large"
+        fill="outline"
+        class="ion-padding"
+        (click)="addImageFromDevice()"
+      >
+        Attach Image
+      </ion-button>
+    </div>
+
     <ion-item>
       <ion-label position="floating">Event Name</ion-label>
       <ion-input
@@ -18,26 +44,126 @@
       ></ion-input>
     </ion-item>
     <ion-item>
-      <ion-label position="floating">Select Event Date</ion-label>
+      <ion-label position="floating">Event Postal</ion-label>
+      <div>
+        <ion-icon
+          size="large"
+          class="input-icon"
+          name="locate"
+          slot="end"
+          (click)="locateMe()"
+        ></ion-icon>
+        <ion-input
+          type="text"
+          inputmode="numeric"
+          (ionBlur)="blurPostalHandler($event)"
+          placeholder="Enter Postal Code"
+          id="eventpostal"
+          formControlName="eventpostal"
+        ></ion-input>
+      </div>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Event Address</ion-label>
+      <ion-textarea
+        type="text"
+        disabled
+        id="eventaddress"
+        formControlName="eventaddress"
+      ></ion-textarea>
+    </ion-item>
+    <ion-item style="margin-top: 16px;">
+      <ion-label>Event Frequency Mode</ion-label>
+      <ion-select
+        value="single"
+        placeholder="Select One"
+        (ionChange)="selectEventMode($event)"
+      >
+        <ion-select-option value="single">Single</ion-select-option>
+        <ion-select-option value="weekly">Weekly</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-label>One day event</ion-label>
+      <ion-checkbox
+        slot="start"
+        checked="true"
+        (ionChange)="selectOneDayOpt($event)"
+      ></ion-checkbox>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Select Start Event Date</ion-label>
       <div>
         <ion-icon
           size="large"
           class="input-icon"
           name="calendar"
           slot="end"
-          (click)="openDatePicker()"
+          (click)="openStartDatePicker()"
         ></ion-icon>
         <ion-input
           placeholder="Enter Input"
           readonly
-          formControlName="eventdate"
+          formControlName="eventstartdate"
           [liIonic4Datepicker]="datePickerConfig"
         ></ion-input>
       </div>
     </ion-item>
+    <ion-item *ngIf="!boolOptOneDayEvent">
+      <ion-label position="floating">Select End Event Date</ion-label>
+      <div>
+        <ion-icon
+          size="large"
+          class="input-icon"
+          name="calendar"
+          slot="end"
+          (click)="openEndDatePicker()"
+        ></ion-icon>
+        <ion-input
+          placeholder="Enter Input"
+          readonly
+          formControlName="eventenddate"
+          [liIonic4Datepicker]="datePickerConfig"
+        ></ion-input>
+      </div>
+    </ion-item>
+    <ion-item>
+      <ion-label>Event Start Time</ion-label>
+      <ion-datetime
+        displayFormat="h:mm A"
+        (ionChange)="timePicker($event, 'start')"
+        minuteValues="0,15,30,45"
+      ></ion-datetime>
+    </ion-item>
+    <ion-item>
+      <ion-label>Event End Time</ion-label>
+      <ion-datetime
+        displayFormat="h:mm A"
+        (ionChange)="timePicker($event, 'end')"
+        minuteValues="0,15,30,45"
+      ></ion-datetime>
+    </ion-item>
 
-    <ion-button type="submit">
-      Click me
+    <ion-item>
+      <ion-label position="floating">Event Information</ion-label>
+      <ion-textarea
+        type="text"
+        id="eventinfomation"
+        formControlName="eventinformation"
+        rows="6"
+        placeholder="Enter more information here..."
+      ></ion-textarea>
+    </ion-item>
+
+    <ion-button
+      type="submit"
+      expand="block"
+      size="large"
+      fill="outline"
+      class="ion-padding"
+      [disabled]="(createEventForm.invalid && boolOptOneDayEvent === true) || !(boolOptOneDayEvent === true || createEventForm.get('eventenddate').value !== null && createEventForm.valid)"
+    >
+      Submit
     </ion-button>
   </form>
 </ion-content>

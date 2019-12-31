@@ -11,11 +11,9 @@ import {
 import { AngularFireStorage } from "@angular/fire/storage";
 
 import { FileOpener } from "@ionic-native/file-opener/ngx";
-import { YoutubeVideoPlayer } from "@ionic-native/youtube-video-player/ngx";
-
+import * as firebase from "firebase";
 import {
   FileTransfer,
-  FileUploadOptions,
   FileTransferObject
 } from "@ionic-native/file-transfer/ngx";
 import { File } from "@ionic-native/file/ngx";
@@ -26,6 +24,7 @@ import * as fromAppReducer from "../store/app.reducer";
 import { AngularFirestore } from "@angular/fire/firestore";
 import { itemsJoin } from "../utils/utils";
 import { QrCodePage } from "../qr-code/qr-code.page";
+import { NativeHelpersService } from "../shared/native-helpers.service";
 
 @Component({
   selector: "app-my-folder",
@@ -33,16 +32,16 @@ import { QrCodePage } from "../qr-code/qr-code.page";
   styleUrls: ["./my-folder.page.scss"]
 })
 export class MyFolderPage implements OnInit {
-  filter: string;
-  userId: string;
-  currentDate: Date = new Date();
-  yesterdayDate: Date = new Date();
-  // fakeFiles$: Subject<any> = new Subject();
-  isLoading: boolean = true;
-  itemFiles: Array<{ name: string; type: string; url: string }> | {};
-  profileUrl: Observable<string | null>;
-  meta: Observable<any>;
-  fileTransfer: FileTransferObject = this.transfer.create();
+  public filter: string;
+  public userId: string;
+  public currentDate: Date = new Date();
+  public yesterdayDate: Date = new Date();
+
+  public isLoading: HTMLIonLoadingElement;
+  public itemFiles: Array<{ name: string; type: string; url: string }> | {};
+  public profileUrl: Observable<string | null>;
+  public meta: Observable<any>;
+  private fileTransfer: FileTransferObject = this.transfer.create();
 
   constructor(
     private loadingController: LoadingController,
@@ -51,19 +50,24 @@ export class MyFolderPage implements OnInit {
     private transfer: FileTransfer,
     private file: File,
     private afs: AngularFirestore,
+    private nativeHelpersService: NativeHelpersService,
     private toastController: ToastController,
     private store: Store<fromAppReducer.AppState>,
     private actionSheetController: ActionSheetController,
     public modalController: ModalController,
     private socialSharing: SocialSharing,
-    private youtube: YoutubeVideoPlayer,
     private navController: NavController
   ) {
     this.yesterdayDate.setDate(this.currentDate.getDate() - 1);
   }
 
-  ngOnInit() {
+  ngOnInit() {}
+
+  ionViewWillEnter() {
     this.filter = "recent";
+
+    this.presentLoading();
+
     this.store
       .pipe(select(fromAppReducer.selectUserId))
       .subscribe(userId => (this.userId = userId));
@@ -79,7 +83,7 @@ export class MyFolderPage implements OnInit {
             this.loadItems();
           } else {
             console.log("does not exist");
-            this.isLoading = false;
+            this.isLoading.dismiss();
             this.itemFiles = [];
           }
         });
@@ -92,7 +96,8 @@ export class MyFolderPage implements OnInit {
       .valueChanges()
       .pipe(itemsJoin(this.afs))
       .subscribe(files => {
-        this.isLoading = false;
+        this.isLoading.dismiss();
+        console.log(files);
         this.itemFiles = files;
       });
   }
@@ -111,75 +116,41 @@ export class MyFolderPage implements OnInit {
   }
 
   async dlOpenImageFile(item) {
-    console.log(item);
-    const ref = this.storage.ref(
-      `${item.name}_${item.createdAt}.${item.format}`
-    );
-    const uri = await ref.getDownloadURL().toPromise();
+    let uri: any = await this.nativeHelpersService.downloadFileHelper(item);
+    const locale_file = uri.toURL();
 
-    this.fileTransfer
-      .download(
-        uri,
-        this.file.dataDirectory +
-          `${item.name}_${item.createdAt}.${item.format}`
-      )
-      .then(
-        entry => {
-          const locale_file = entry.toURL();
-          console.log("download complete: " + locale_file);
-          this.fileOpener
-            .open(locale_file, "image/jpeg")
-            .then(() => console.log("File is opened"))
-            .catch(e => console.log("Error opening file", e));
-        },
-        error => {
-          // handle error
-          throw Error("Unable to download file.");
-        }
-      );
+    console.log("download complete: " + locale_file);
+
+    this.fileOpener
+      .open(locale_file, `image/${item.format}`)
+      .then(() => this.isLoading.dismiss())
+      .catch(e => console.log("Error opening file", e));
   }
 
   async dlOpenPdfFile(item) {
-    const ref = this.storage.ref(
-      `${item.name}_${item.createdAt}.${item.format}`
-    );
-    const uri = await ref.getDownloadURL().toPromise();
+    let uri: any = await this.nativeHelpersService.downloadFileHelper(item);
+    const locale_file = uri.toURL();
 
-    this.fileTransfer
-      .download(
-        uri,
-        this.file.dataDirectory +
-          `${item.name}_${item.createdAt}.${item.format}`
-      )
-      .then(
-        entry => {
-          const locale_file = entry.toURL();
-          console.log("download complete: " + locale_file);
-          this.fileOpener
-            .open(locale_file, "application/pdf")
-            .then(() => console.log("File is opened"))
-            .catch(e => console.log("Error opening file", e));
-        },
-        error => {
-          // handle error
-          throw Error("Unable to download file.");
-        }
-      );
+    console.log("download complete: " + locale_file);
+
+    this.fileOpener
+      .open(locale_file, "application/pdf")
+      .then(() => this.isLoading.dismiss())
+      .catch(e => console.log("Error opening file", e));
   }
 
   async presentLoading() {
-    const loading = await this.loadingController.create({
+    this.isLoading = await this.loadingController.create({
       spinner: "circular",
-      duration: 3000,
       message: "Loading Content. Please wait...",
       translucent: true,
       cssClass: "loading-width extent-content"
     });
-    return await loading.present();
+    return await this.isLoading.present();
   }
 
   openYoutubeApp(item) {
-    this.youtube.openVideo(item.value);
+    this.nativeHelpersService.openYoutubeApp(item.value);
   }
 
   openItem(item) {
@@ -203,6 +174,12 @@ export class MyFolderPage implements OnInit {
       default:
         this.presentToast(false);
     }
+  }
+
+  deleteItem(item) {
+    this.afs.doc(`users/${this.userId}/private/inventory`).update({
+      items: firebase.firestore.FieldValue.arrayRemove(item.id)
+    });
   }
 
   async presentToast(supported) {
@@ -235,48 +212,44 @@ export class MyFolderPage implements OnInit {
   }
 
   async dlOpenPptxFile(item) {
-    const ref = this.storage.ref(
-      `${item.name}_${item.createdAt}.${item.format}`
-    );
-    const uri = await ref.getDownloadURL().toPromise();
+    let uri: any = await this.nativeHelpersService.downloadFileHelper(item);
+    const locale_file = uri.toURL();
 
-    this.fileTransfer
-      .download(
-        uri,
-        this.file.dataDirectory +
-          `${item.name}_${item.createdAt}.${item.format}`
+    console.log("download complete: " + locale_file);
+
+    this.fileOpener
+      .open(
+        locale_file,
+        "application/vnd.openxmlformats-officedocument.presentationml.presentation"
       )
-      .then(
-        entry => {
-          const locale_file = entry.toURL();
-          console.log("download complete: " + locale_file);
-          this.fileOpener
-            .open(
-              locale_file,
-              "application/vnd.openxmlformats-officedocument.presentationml.presentation"
-            )
-            .then(() => console.log("File is opened"))
-            .catch(e => console.log("Error opening file", e));
-        },
-        error => {
-          // handle error
-          throw Error("Unable to download file.");
-        }
-      );
+      .then(() => console.log("File is opened"))
+      .catch(e => console.log("Error opening file", e));
   }
 
   navigatePush(page) {
     this.navController.navigateForward("/" + page);
   }
 
-  async presentModal() {
+  async presentModal(item) {
     const modal = await this.modalController.create({
-      component: QrCodePage
+      component: QrCodePage,
+      componentProps: { item }
     });
     return await modal.present();
   }
 
-  shareByEmail() {
+  async shareByEmail(item) {
+    const ref = this.storage.ref(
+      `${item.name}_${item.createdAt}.${item.format}`
+    );
+    const uri = await ref.getDownloadURL().toPromise();
+
+    const entry = await this.fileTransfer.download(
+      uri,
+      this.file.dataDirectory + `${item.name}_${item.createdAt}.${item.format}`
+    );
+
+    const locale_file = entry.toURL();
     // Check if sharing via email is supported
     this.socialSharing
       .canShareViaEmail()
@@ -285,7 +258,14 @@ export class MyFolderPage implements OnInit {
         // Share via email
         console.log("can share by email");
         this.socialSharing
-          .shareViaEmail("Body", "Subject", ["recipient@example.org"])
+          .shareViaEmail(
+            "The items is shared via eventApp",
+            "",
+            [""],
+            [""],
+            [""],
+            locale_file
+          )
           .then(() => {
             // Success!
             console.log("sucess stage");
@@ -303,34 +283,71 @@ export class MyFolderPage implements OnInit {
       });
   }
 
-  shareByWhatsapp() {
+  async shareByWhatsapp(item) {
     // Check if sharing via email is supported
-    this.socialSharing
-      .canShareVia("whatsapp")
-      .then(() => {
-        // Sharing via email is possible
-        // Share via email
-        console.log("can share by email");
-        this.socialSharing
-          .shareViaWhatsApp("Body")
-          .then(() => {
-            // Success!
-            console.log("sucess stage");
-          })
-          .catch(() => {
-            // Error!
-            this.presentToast(false);
-            console.error("failed");
-          });
-      })
-      .catch(() => {
-        // Sharing via email is not possible
-        this.presentToast(false);
-        console.error("error");
-      });
+    if (item.type === "youtube") {
+      this.socialSharing
+        .canShareVia("whatsapp")
+        .then(() => {
+          // Sharing via email is possible
+          // Share via email
+          this.socialSharing
+            .shareViaWhatsApp("Share by eventApp", "", item.url)
+            .then(() => {
+              // Success!
+              console.log("sucess stage");
+            })
+            .catch(() => {
+              // Error!
+              this.presentToast(false);
+              console.error("failed");
+            });
+        })
+        .catch(() => {
+          // Sharing via email is not possible
+          this.presentToast(false);
+          console.error("error");
+        });
+    } else {
+      const ref = this.storage.ref(
+        `${item.name}_${item.createdAt}.${item.format}`
+      );
+      const uri = await ref.getDownloadURL().toPromise();
+
+      const entry = await this.fileTransfer.download(
+        uri,
+        this.file.dataDirectory +
+          `${item.name}_${item.createdAt}.${item.format}`
+      );
+
+      const locale_file = entry.toURL();
+
+      this.socialSharing
+        .canShareVia("whatsapp")
+        .then(() => {
+          // Sharing via email is possible
+          // Share via email
+          this.socialSharing
+            .shareViaWhatsApp("Share by eventApp", locale_file)
+            .then(() => {
+              // Success!
+              console.log("sucess stage");
+            })
+            .catch(() => {
+              // Error!
+              this.presentToast(false);
+              console.error("failed");
+            });
+        })
+        .catch(() => {
+          // Sharing via email is not possible
+          this.presentToast(false);
+          console.error("error");
+        });
+    }
   }
 
-  async presentActionSheet() {
+  async presentActionSheet(item) {
     const actionSheet = await this.actionSheetController.create({
       header: "Share Options",
       buttons: [
@@ -338,7 +355,7 @@ export class MyFolderPage implements OnInit {
           text: "QR Code",
           icon: "barcode",
           handler: () => {
-            this.presentModal();
+            this.presentModal(item);
           }
         },
         {
@@ -346,7 +363,7 @@ export class MyFolderPage implements OnInit {
           icon: "mail",
           handler: () => {
             console.log("Share clicked");
-            this.shareByEmail();
+            this.shareByEmail(item);
           }
         },
         {
@@ -354,7 +371,7 @@ export class MyFolderPage implements OnInit {
           icon: "logo-whatsapp",
           handler: () => {
             console.log("Play clicked");
-            this.shareByWhatsapp();
+            this.shareByWhatsapp(item);
           }
         },
         {

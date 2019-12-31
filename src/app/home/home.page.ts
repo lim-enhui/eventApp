@@ -5,6 +5,7 @@ import { Router } from "@angular/router";
 import { Store, select } from "@ngrx/store";
 import * as fromAppReducer from "../store/app.reducer";
 import { Observable } from "rxjs";
+import { AngularFirestore } from "@angular/fire/firestore";
 
 @Component({
   selector: "app-home",
@@ -23,7 +24,8 @@ export class HomePage implements OnInit {
     public menuController: MenuController,
     private router: Router,
     private store: Store<any>,
-    private navController: NavController
+    private navController: NavController,
+    private afs: AngularFirestore
   ) {}
 
   ngOnInit() {
@@ -32,6 +34,13 @@ export class HomePage implements OnInit {
       select(fromAppReducer.selectGeolocation)
     );
     this.geolocation$.subscribe(console.log);
+  }
+
+  ionViewWillEnter() {
+    this.afs
+      .collection("events")
+      .valueChanges()
+      .subscribe(console.log);
   }
 
   onDistanceChange(event) {
