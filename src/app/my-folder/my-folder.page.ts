@@ -124,7 +124,7 @@ export class MyFolderPage implements OnInit {
     this.fileOpener
       .open(locale_file, `image/${item.format}`)
       .then(() => this.isLoading.dismiss())
-      .catch(e => console.log("Error opening file", e));
+      .catch(e => this.isLoading.dismiss());
   }
 
   async dlOpenPdfFile(item) {
@@ -136,7 +136,7 @@ export class MyFolderPage implements OnInit {
     this.fileOpener
       .open(locale_file, "application/pdf")
       .then(() => this.isLoading.dismiss())
-      .catch(e => console.log("Error opening file", e));
+      .catch(e => this.isLoading.dismiss());
   }
 
   async presentLoading() {
@@ -222,8 +222,8 @@ export class MyFolderPage implements OnInit {
         locale_file,
         "application/vnd.openxmlformats-officedocument.presentationml.presentation"
       )
-      .then(() => console.log("File is opened"))
-      .catch(e => console.log("Error opening file", e));
+      .then(() => this.isLoading.dismiss())
+      .catch(e => this.isLoading.dismiss());
   }
 
   navigatePush(page) {

@@ -64,7 +64,6 @@ export class QrScannerPage implements OnInit {
 
   async openScannedItem(item) {
     console.log("dispatch loading true and is downloading");
-    // this.store.dispatch(fromAppActions.updateQRLoading({ loading: true }));
     let uri: any;
     let locale_file;
 
@@ -111,7 +110,6 @@ export class QrScannerPage implements OnInit {
           const locale_file = entry.toURL();
           console.log("download complete: " + locale_file);
           console.log("dispatch loading false");
-          // this.store.dispatch(fromAppActions.updateQRLoading({ loading: false }));
           this.fileOpener
             .open(locale_file, "image/jpeg")
             .then(() => {
@@ -120,8 +118,6 @@ export class QrScannerPage implements OnInit {
             .catch(e => console.log("Error opening file", e));
         },
         error => {
-          // handle error
-          // this.store.dispatch(fromAppActions.updateQRLoading({ loading: false }));
           throw Error("Unable to download file.");
         }
       )

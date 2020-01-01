@@ -4,7 +4,7 @@
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-buttons slot="end">
-      <ion-button (click)="navigatePush('teleport')">
+      <ion-button (click)="navigateTo('teleport')">
         <ion-icon slot="icon-only" name="pin"></ion-icon>
       </ion-button>
       <ion-button (click)="toggleRightMenu()">
@@ -69,7 +69,7 @@
       <ion-item>
         <ion-range
           min="2"
-          max="10"
+          max="5"
           step="2"
           [(ngModel)]="distance"
           (ionChange)="onDistanceChange($event)"
@@ -82,65 +82,58 @@
   </ion-content>
 </ion-menu>
 
-<ion-content id="home-content">
+<ion-content id="home-content" style="margin-bottom: 32px;">
   <ion-fab vertical="bottom" horizontal="center" slot="fixed">
     <ion-fab-button (click)="navigateTo('create-new-event')">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
   </ion-fab>
-  <ion-card>
-    <img src="assets/img/nin-live.png" />
+  <ion-card *ngFor="let event of events">
+    <img [src]="event.eventimage === null ? defaultImage : event.eventimage" />
     <ion-card-content>
       <ion-card-title>
-        Singing Club
+        {{event.eventname}}
       </ion-card-title>
-      <ion-card-subtitle>
-        Every Tuesday, 7pm - 9pm
+      <ion-card-subtitle
+        *ngIf="event.eventmode === 'weekly' && event.eventisonedayevent"
+      >
+        Every {{ event.eventstartdate | date: 'EEEE'}}, {{ event.eventtimestart
+        }} till {{ event.eventtimeend }}
       </ion-card-subtitle>
+      <ion-card-subtitle
+        *ngIf="event.eventmode === 'weekly' && !event.eventisonedayevent"
+      >
+        Every {{ event.eventstartdate | date: 'EEEE'}} to {{ event.eventenddate
+        | date: 'EEEE'}}, {{ event.eventtimestart }} till {{ event.eventtimeend
+        }}
+      </ion-card-subtitle>
+      <ion-card-subtitle
+        *ngIf="event.eventmode === 'single' && event.eventisonedayevent"
+      >
+        {{ event.eventstartdate | date: 'dd-MMM-yyyy, EEEE'}} From {{
+        event.eventtimestart }} till {{ event.eventtimeend}}
+      </ion-card-subtitle>
+      <ion-card-subtitle
+        *ngIf="event.eventmode === 'single' && !event.eventisonedayevent"
+      >
+        {{ event.eventstartdate | date: 'dd-MMM-yyyy'}} to {{ event.eventenddate
+        | date: 'dd-MMM-yyyy'}} ({{ event.eventstartdate | date: 'EEE'}} - {{
+        event.eventenddate | date: 'EEE'}})<br />
+        From {{ event.eventtimestart }} till {{ event.eventtimeend}}
+      </ion-card-subtitle>
+
       <p class="ion-padding-top">
-        The most popular industrial group ever, and largely responsible for
-        bringing the music to a mass audience.
+        {{truncateString(event.eventinformation, 140)}}
       </p>
     </ion-card-content>
     <ion-row>
       <ion-col>
-        <ion-button fill="clear">
-          <ion-icon slot="start" name="thumbs-up"></ion-icon>
-          <div>12 Likes</div>
-        </ion-button>
-      </ion-col>
-      <ion-col>
-        <ion-button fill="clear">
-          <ion-icon slot="start" name="paper"></ion-icon>
-          <div>Find out more</div>
-        </ion-button>
-      </ion-col>
-    </ion-row>
-  </ion-card>
-  <ion-card>
-    <img src="assets/img/nin-live.png" />
-    <ion-card-content>
-      <ion-card-title>
-        Singing Club
-      </ion-card-title>
-      <ion-card-subtitle>
-        Every Tuesday, 7pm - 9pm
-      </ion-card-subtitle>
-      <p class="ion-padding-top">
-        The most popular industrial group ever, and largely responsible for
-        bringing the music to a mass audience.
-      </p>
-    </ion-card-content>
-    <ion-row>
-      <ion-col>
-        <ion-button fill="clear">
-          <ion-icon slot="start" name="thumbs-up"></ion-icon>
-          <div>12 Likes</div>
-        </ion-button>
-      </ion-col>
-      <ion-col>
-        <ion-button fill="clear">
-          <ion-icon slot="start" name="paper"></ion-icon>
+        <ion-button
+          fill="clear"
+          expand="full"
+          (click)="navigatePush('tabs/event-registration')"
+        >
+          <ion-icon slot="start" name="information-circle-outline"></ion-icon>
           <div>Find out more</div>
         </ion-button>
       </ion-col>

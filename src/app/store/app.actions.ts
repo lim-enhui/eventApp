@@ -1,10 +1,18 @@
 import { createAction, props } from "@ngrx/store";
+import { IEvent } from "../model/event.interface";
 
 export const loadGeoLocation = createAction("[App Page] Load GeoLocation");
+
+export const loadEvents = createAction("[Home Page] Load Events");
 
 export const loadGeoLocationSuccess = createAction(
   "[App Page] Load GeoLocation Success",
   props<{ latitude: number; longitude: number }>()
+);
+
+export const loadEventsSuccess = createAction(
+  "[Home Page] Load Events Success",
+  props<{ events: IEvent[] }>()
 );
 
 export const updateGeoLocation = createAction(
@@ -12,17 +20,12 @@ export const updateGeoLocation = createAction(
   props<{ latitude: number; longitude: number }>()
 );
 
+export const updateEvents = createAction(
+  "[Home Page] Load Events Success",
+  props<{ events: IEvent[] }>()
+);
+
 export const updateUserId = createAction(
   "[Auth Page] Update UserId",
   props<{ userId: string }>()
-);
-
-export const updateScanning = createAction(
-  "[QrScanner Page] Update Scanning State",
-  props<{ isScanning: boolean }>()
-);
-
-export const updateQRLoading = createAction(
-  "[QRScanner Page] Update Loading State",
-  props<{ loading: boolean }>()
 );

@@ -1,12 +1,12 @@
 import * as fromRoot from "./app.actions";
 import { createReducer, on, createSelector, State } from "@ngrx/store";
 import { IGeoLocation } from "./geolocation.model";
+import { IEvent } from "../model/event.interface";
 
 export interface AppState {
   geolocation: IGeoLocation;
-  loading: boolean;
   userId: string;
-  isScanning: boolean;
+  events: IEvent[];
 }
 
 const initialState: AppState = {
@@ -14,9 +14,8 @@ const initialState: AppState = {
     latitude: null,
     longitude: null
   },
-  loading: false,
   userId: "",
-  isScanning: false
+  events: []
 };
 
 export const appReducer = createReducer(
@@ -28,6 +27,12 @@ export const appReducer = createReducer(
         latitude: payload.latitude,
         longitude: payload.longitude
       }
+    };
+  }),
+  on(fromRoot.loadEventsSuccess, (state, payload) => {
+    return {
+      ...state,
+      events: payload.events
     };
   }),
   on(fromRoot.updateGeoLocation, (state, payload) => {
@@ -44,18 +49,6 @@ export const appReducer = createReducer(
       ...state,
       userId: payload.userId
     };
-  }),
-  on(fromRoot.updateScanning, (state, payload) => {
-    return {
-      ...state,
-      isScanning: payload.isScanning
-    };
-  }),
-  on(fromRoot.updateQRLoading, (state, payload) => {
-    return {
-      ...state,
-      loading: payload.loading
-    };
   })
 );
 
@@ -66,17 +59,12 @@ export const selectUserId = createSelector(
   (state: AppState) => state.userId
 );
 
+export const selectEvents = createSelector(
+  selectApp,
+  (state: AppState) => state.events
+);
+
 export const selectGeolocation = createSelector(
   selectApp,
   (state: AppState) => state.geolocation
-);
-
-export const selectIsScanning = createSelector(
-  selectApp,
-  (state: AppState) => state.isScanning
-);
-
-export const selectLoading = createSelector(
-  selectApp,
-  (state: AppState) => state.loading
 );

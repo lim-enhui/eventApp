@@ -41,7 +41,8 @@ const routes: Routes = [
     path: "my-settings",
     loadChildren: "./my-settings/my-settings.module#MySettingsPageModule"
   },
-  { path: 'create-new-item', loadChildren: './create-new-item/create-new-item.module#CreateNewItemPageModule' }
+  { path: 'create-new-item', loadChildren: './create-new-item/create-new-item.module#CreateNewItemPageModule' },
+  { path: 'event-registration', loadChildren: './event-registration/event-registration.module#EventRegistrationPageModule' }
 ];
 
 @NgModule({

@@ -41,6 +41,8 @@ export class CreateNewEventPage implements OnInit {
   public eventmode: string = "single";
   public eventlat: number;
   public eventlng: number;
+  public eventtimestart: string;
+  public eventtimeend: string;
 
   public datePickerConfig = {
     clearButton: false
@@ -135,7 +137,9 @@ export class CreateNewEventPage implements OnInit {
         eventmode: this.eventmode,
         creator: this.userId,
         eventlng: this.eventlng,
-        eventlat: this.eventlat
+        eventlat: this.eventlat,
+        eventtimestart: this.eventtimestart,
+        eventtimeend: this.eventtimeend
       })
       .then(doc => {
         console.log(doc.id);
@@ -182,9 +186,13 @@ export class CreateNewEventPage implements OnInit {
   }
 
   timePicker(event, type) {
-    console.log(event.detail.value);
     let timestamp = moment(event.detail.value);
-    console.log(timestamp.format("HH mm"));
+
+    if (type === "start") {
+      this.eventtimestart = timestamp.format("hh mm A");
+    } else {
+      this.eventtimeend = timestamp.format("hh mm A");
+    }
   }
 
   async presentLoading() {

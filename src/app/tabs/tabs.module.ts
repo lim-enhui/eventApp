@@ -74,6 +74,17 @@ const routes: Routes = [
         ]
       },
       {
+        path: "event-registration",
+        children: [
+          {
+            path: "",
+            loadChildren:
+              "../event-registration/event-registration.module#EventRegistrationPageModule",
+            canLoad: [AuthGuard]
+          }
+        ]
+      },
+      {
         path: "",
         redirectTo: "/tabs/home",
         pathMatch: "full",

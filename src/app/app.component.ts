@@ -36,6 +36,7 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     console.log("App Initialization");
     this.store.dispatch(fromAppActions.loadGeoLocation());
+    this.store.dispatch(fromAppActions.loadEvents());
   }
 
   closeMenu() {
