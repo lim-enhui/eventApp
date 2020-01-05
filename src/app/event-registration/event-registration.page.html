@@ -3,10 +3,249 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/tabs/home"></ion-back-button>
     </ion-buttons>
-    <ion-title>Event</ion-title>
+    <ion-title>About Event</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  event page
+  <img
+    style="width: 100%; padding: 0px; max-height: 400px;"
+    [src]="event.eventimage === 'null' ? defaultImage : event.eventimage"
+  />
+  <ion-list class="ion-no-padding" style="margin-top: -4px;">
+    <ion-item-group>
+      <ion-item-divider color="secondary">
+        <ion-icon name="information-circle-outline" slot="start"></ion-icon>
+        <ion-label>Information</ion-label>
+      </ion-item-divider>
+      <ion-row>
+        <ion-col size="3" offset="1">
+          <ion-avatar
+            style="align-items: center; display: flex; justify-content: center;"
+          >
+            <img
+              src="assets/img/default_profile.jpg"
+              style="width: 70%; height: 70%;"
+            />
+          </ion-avatar>
+        </ion-col>
+        <ion-col size="7" pull="1" style="margin: auto;">
+          <ion-label>
+            <h6>CREATOR</h6>
+            <p>{{ user?.displayName }}</p>
+          </ion-label>
+        </ion-col>
+      </ion-row>
+    </ion-item-group>
+    <ion-item-group>
+      <ion-row>
+        <ion-col size="2" offset="1" style="margin: auto;">
+          <div
+            style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;"
+          >
+            <ion-icon
+              slot="icon-only"
+              name="calendar"
+              size="large"
+              class="default-icon-color"
+            ></ion-icon>
+          </div>
+        </ion-col>
+        <ion-col
+          *ngIf="event.eventmode === 'weekly' && event.eventisonedayevent"
+          size="7"
+          offset="1"
+          pull="1"
+          style="margin: auto;"
+        >
+          <ion-label class="ion-text-wrap">
+            <h6>DATE AND TIME</h6>
+            <p>
+              Every {{ event.eventstartdate | date: 'EEEE'}}, {{
+              event.eventtimestart }} till {{ event.eventtimeend }}
+            </p>
+          </ion-label>
+        </ion-col>
+        <ion-col
+          *ngIf="event.eventmode === 'weekly' && !event.eventisonedayevent"
+          size="7"
+          offset="1"
+          pull="1"
+          style="margin: auto;"
+        >
+          <ion-label class="ion-text-wrap">
+            <h6>DATE AND TIME</h6>
+            <p>
+              Every {{ event.eventstartdate | date: 'EEEE'}} to {{
+              event.eventenddate | date: 'EEEE'}}, {{ event.eventtimestart }}
+              till {{ event.eventtimeend }}
+            </p>
+          </ion-label>
+        </ion-col>
+        <ion-col
+          *ngIf="event.eventmode === 'single' && event.eventisonedayevent"
+          size="7"
+          offset="1"
+          pull="1"
+          style="margin: auto;"
+        >
+          <ion-label class="ion-text-wrap">
+            <h6>DATE AND TIME</h6>
+            <p>
+              {{ event.eventstartdate | date: 'dd-MMM-yyyy, EEEE'}} <br />
+              From {{ event.eventtimestart }} till {{ event.eventtimeend}}
+            </p>
+          </ion-label>
+        </ion-col>
+        <ion-col
+          *ngIf="event.eventmode === 'single' && !event.eventisonedayevent"
+          size="7"
+          offset="1"
+          pull="1"
+          style="margin: auto;"
+        >
+          <ion-label class="ion-text-wrap">
+            <h6>DATE AND TIME</h6>
+            <p>
+              {{ event.eventstartdate | date: 'dd-MMM-yyyy'}} to {{
+              event.eventenddate | date: 'dd-MMM-yyyy'}} ({{
+              event.eventstartdate | date: 'EEE'}} - {{ event.eventenddate |
+              date: 'EEE'}})<br />
+              From {{ event.eventtimestart }} till {{ event.eventtimeend}}
+            </p>
+          </ion-label>
+        </ion-col>
+      </ion-row>
+    </ion-item-group>
+    <ion-item-group>
+      <ion-row>
+        <ion-col size="2" offset="1" style="margin: auto;">
+          <div
+            style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;"
+          >
+            <ion-icon
+              slot="icon-only"
+              name="pin"
+              size="large"
+              class="default-icon-color"
+            ></ion-icon>
+          </div>
+        </ion-col>
+        <ion-col size="7" offset="1" pull="1" style="margin: auto;">
+          <ion-label class="ion-text-wrap">
+            <h6>ADDRESS</h6>
+            <p>{{event.eventaddress}}</p>
+          </ion-label>
+        </ion-col>
+      </ion-row>
+    </ion-item-group>
+    <ion-item-group>
+      <ion-item-divider color="secondary" style="margin-top: 16px;">
+        <ion-icon name="today" slot="start"></ion-icon>
+        <ion-label>Everything you need to know...</ion-label>
+      </ion-item-divider>
+
+      <div style="margin: 24px;" [innerHtml]="event.eventinformation"></div>
+    </ion-item-group>
+
+    <ion-item-group>
+      <ion-item-divider color="secondary">
+        <ion-icon name="walk" slot="start"></ion-icon>
+        <ion-label>Direction</ion-label>
+      </ion-item-divider>
+
+      <ion-item class="ion-no-padding agm-map-item">
+        <agm-map
+          [latitude]="latitude"
+          [longitude]="longitude"
+          [zoom]="16"
+          [mapDraggable]="false"
+        >
+          <agm-marker
+            [latitude]="latitude"
+            [longitude]="longitude"
+          ></agm-marker>
+        </agm-map>
+      </ion-item>
+    </ion-item-group>
+    <ion-item-group>
+      <ion-item-divider color="secondary">
+        <ion-icon name="contact" slot="start"></ion-icon>
+        <ion-label>Contact Organiser</ion-label>
+      </ion-item-divider>
+
+      <ion-item class="ion-no-padding">
+        <ion-row style="width: 100%;">
+          <ion-col size="4">
+            <div
+              style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; flex-direction: column; pointer-events:none;"
+            >
+              <ion-icon
+                slot="icon-only"
+                name="send"
+                size="large"
+                (click)="onClick('message')"
+                style="margin: 8px 0px;"
+                class="default-icon-color"
+              ></ion-icon>
+              <ion-label>Message</ion-label>
+            </div>
+          </ion-col>
+          <ion-col size="4">
+            <div
+              style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; flex-direction: column;"
+            >
+              <ion-icon
+                slot="icon-only"
+                name="mail"
+                *ngIf="!(user?.email === null)"
+                size="large"
+                (click)="onClick('email')"
+                style="margin: 8px 0px;"
+                class="default-icon-color"
+              ></ion-icon>
+              <ion-icon
+                slot="icon-only"
+                name="remove-circle"
+                *ngIf="(user?.email === null)"
+                size="large"
+                style="margin: 8px 0px;"
+                class="default-icon-color"
+              ></ion-icon>
+              <ion-label *ngIf="!(user?.email === null)">Email</ion-label>
+              <ion-label *ngIf="(user?.email === null)"
+                >Email Disabled</ion-label
+              >
+            </div></ion-col
+          >
+          <ion-col size="4">
+            <div
+              style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; flex-direction: column;"
+            >
+              <ion-icon
+                slot="icon-only"
+                name="call"
+                *ngIf="!(user?.phoneNumber === null)"
+                size="large"
+                style="margin: 8px 0px;"
+                class="default-icon-color"
+              ></ion-icon>
+              <ion-icon
+                slot="icon-only"
+                name="remove-circle"
+                *ngIf="(user?.phoneNumber === null)"
+                size="large"
+                style="margin: 8px 0px;"
+                class="default-icon-color"
+              ></ion-icon>
+              <ion-label *ngIf="user?.phoneNumber === 'null'">Call</ion-label>
+              <ion-label *ngIf="!(user?.phoneNumber === 'null')"
+                >Call Disabled</ion-label
+              >
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-item>
+    </ion-item-group>
+  </ion-list>
 </ion-content>

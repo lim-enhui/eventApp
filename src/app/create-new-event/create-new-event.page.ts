@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { Ionic4DatepickerModalComponent } from "@logisticinfotech/ionic4-datepicker";
 import {
@@ -18,7 +18,6 @@ import { HttpClient } from "@angular/common/http";
 import { environment } from "../../environments/environment";
 import { NativeHelpersService } from "../shared/native-helpers.service";
 import * as firebase from "firebase";
-import { of } from "rxjs";
 import { Router } from "@angular/router";
 import { sleeper } from "../utils/utils";
 
@@ -28,6 +27,8 @@ import { sleeper } from "../utils/utils";
   styleUrls: ["./create-new-event.page.scss"]
 })
 export class CreateNewEventPage implements OnInit {
+  @ViewChild("eventinformation", { static: false }) eventinformation;
+
   public startDateSelected;
   public endDateSelected;
   public createEventForm: FormGroup;
@@ -122,6 +123,8 @@ export class CreateNewEventPage implements OnInit {
   }
 
   async uploadForm(_url = null) {
+    const regexEnter = /\n/g;
+
     this.afs
       .collection("events")
       .add({
@@ -130,7 +133,9 @@ export class CreateNewEventPage implements OnInit {
         eventimage: _url,
         eventpostal: this.createEventForm.get("eventpostal").value,
         eventaddress: this.createEventForm.get("eventaddress").value,
-        eventinformation: this.createEventForm.get("eventinformation").value,
+        eventinformation: this.createEventForm
+          .get("eventinformation")
+          .value.replace(regexEnter, "<br/>"),
         eventstartdate: this.createEventForm.get("eventstartdate").value,
         eventenddate: this.createEventForm.get("eventenddate").value,
         eventisonedayevent: this.boolOptOneDayEvent,

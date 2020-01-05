@@ -1,8 +1,6 @@
 import { NgModule } from "@angular/core";
 import { PreloadAllModules, RouterModule, Routes } from "@angular/router";
 
-import { AuthGuard } from "./auth/auth.guard";
-
 const routes: Routes = [
   { path: "", loadChildren: "./tabs/tabs.module#TabsPageModule" },
   { path: "auth", loadChildren: "./auth/auth.module#AuthPageModule" },
@@ -41,8 +39,17 @@ const routes: Routes = [
     path: "my-settings",
     loadChildren: "./my-settings/my-settings.module#MySettingsPageModule"
   },
-  { path: 'create-new-item', loadChildren: './create-new-item/create-new-item.module#CreateNewItemPageModule' },
-  { path: 'event-registration', loadChildren: './event-registration/event-registration.module#EventRegistrationPageModule' }
+  {
+    path: "create-new-item",
+    loadChildren:
+      "./create-new-item/create-new-item.module#CreateNewItemPageModule"
+  },
+  {
+    path: "event-registration",
+    loadChildren:
+      "./event-registration/event-registration.module#EventRegistrationPageModule"
+  },
+  { path: 'teleport', loadChildren: './teleport/teleport.module#TeleportPageModule' }
 ];
 
 @NgModule({

@@ -14,7 +14,7 @@ export class MessagePage implements OnInit, AfterViewInit {
   public messages: Array<any>;
   public editorMsg: string;
 
-  @ViewChild("messageContainer") messageContainer;
+  @ViewChild("messageContainer", { static: false }) messageContainer;
 
   constructor(
     private authService: AuthService,

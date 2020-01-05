@@ -4,9 +4,7 @@ import { MenuController, NavController } from "@ionic/angular";
 import { Router } from "@angular/router";
 import { Store, select } from "@ngrx/store";
 import * as fromAppReducer from "../store/app.reducer";
-import * as fromAppActions from "../store/app.actions";
-import { Observable, of } from "rxjs";
-import { AngularFirestore } from "@angular/fire/firestore";
+import { Observable } from "rxjs";
 import { IEvent } from "../model/event.interface";
 import { map, switchMap } from "rxjs/operators";
 import { distanceInKmBetweenEarthCoordinates } from "../utils/utils";
@@ -32,8 +30,7 @@ export class HomePage implements OnInit {
     public menuController: MenuController,
     private router: Router,
     private store: Store<fromAppReducer.AppState>,
-    private navController: NavController,
-    private afs: AngularFirestore
+    private navController: NavController
   ) {}
 
   ngOnInit() {
@@ -141,9 +138,9 @@ export class HomePage implements OnInit {
     this.navController.navigateForward("/" + page);
   }
 
-  navigateTo(page) {
+  navigateTo(page, params = {}) {
     const url = "/" + page;
     console.log(url);
-    this.router.navigate([url]);
+    this.router.navigate([url, params]);
   }
 }

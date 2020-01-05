@@ -13,17 +13,10 @@ import {
   AngularFirestore,
   AngularFirestoreDocument
 } from "@angular/fire/firestore";
-import { Store, select } from "@ngrx/store";
+import { Store } from "@ngrx/store";
 import * as fromAppReducer from "../store/app.reducer";
 import * as fromAppActions from "../store/app.actions";
-
-export interface IUser {
-  uid: string;
-  displayName: string;
-  photoUrl?: string;
-  email: string;
-  phoneNumber?: number | null | string;
-}
+import { IUser } from "../model/user.interface";
 
 @Injectable({
   providedIn: "root"

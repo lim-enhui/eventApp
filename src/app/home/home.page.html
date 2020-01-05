@@ -121,17 +121,17 @@
         event.eventenddate | date: 'EEE'}})<br />
         From {{ event.eventtimestart }} till {{ event.eventtimeend}}
       </ion-card-subtitle>
-
-      <p class="ion-padding-top">
-        {{truncateString(event.eventinformation, 140)}}
-      </p>
+      <div
+        style="margin-top: 16px;"
+        [innerHtml]="truncateString(event.eventinformation, 140)"
+      ></div>
     </ion-card-content>
     <ion-row>
       <ion-col>
         <ion-button
           fill="clear"
           expand="full"
-          (click)="navigatePush('tabs/event-registration')"
+          (click)="navigateTo('tabs/event-registration', event)"
         >
           <ion-icon slot="start" name="information-circle-outline"></ion-icon>
           <div>Find out more</div>
