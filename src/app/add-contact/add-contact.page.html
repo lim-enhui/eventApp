@@ -23,22 +23,22 @@
     <ion-item *virtualItem="let contact">
       <ion-avatar slot="start">
         <ion-img
-          *ngIf="contact.photoUrl === null"
+          *ngIf="contact?.photoUrl === null"
           src="assets/img/default.jpg"
         ></ion-img>
         <ion-img
-          *ngIf="contact.photoUrl !== null"
+          *ngIf="contact?.photoUrl !== null"
           [src]="contact.photoUrl"
         ></ion-img>
       </ion-avatar>
       <ion-label>
         <h2 class="ion-text-capitalize">
-          {{ contact.displayName }}
+          {{ contact?.displayName }}
         </h2>
-        <p>{{ contact.email }}</p>
+        <p>{{ contact?.email }}</p>
       </ion-label>
       <ion-icon
-        *ngIf="!(existingContacts.indexOf(contact.uid) > -1) && contact.uid !== userId; else addedTemplate"
+        *ngIf="!(existingContacts.indexOf(contact?.uid) > -1) && contact?.uid !== userId; else addedTemplate"
         name="add"
         slot="end"
         (click)="addContact(contact)"

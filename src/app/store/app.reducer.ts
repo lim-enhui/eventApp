@@ -2,11 +2,13 @@ import * as fromRoot from "./app.actions";
 import { createReducer, on, createSelector, State } from "@ngrx/store";
 import { IGeoLocation } from "./geolocation.model";
 import { IEvent } from "../model/event.interface";
+import { IMessage } from "../model/message.interface";
 
 export interface AppState {
   geolocation: IGeoLocation;
   userId: string;
   events: IEvent[];
+  messages: IMessage[];
 }
 
 const initialState: AppState = {
@@ -15,7 +17,8 @@ const initialState: AppState = {
     longitude: null
   },
   userId: "",
-  events: []
+  events: [],
+  messages: []
 };
 
 export const appReducer = createReducer(
@@ -33,6 +36,12 @@ export const appReducer = createReducer(
     return {
       ...state,
       events: payload.events
+    };
+  }),
+  on(fromRoot.loadMessagesSuccess, (state, payload) => {
+    return {
+      ...state,
+      messages: payload.messages
     };
   }),
   on(fromRoot.updateGeoLocation, (state, payload) => {
@@ -62,6 +71,11 @@ export const selectUserId = createSelector(
 export const selectEvents = createSelector(
   selectApp,
   (state: AppState) => state.events
+);
+
+export const selectMessages = createSelector(
+  selectApp,
+  (state: AppState) => state.messages
 );
 
 export const selectGeolocation = createSelector(

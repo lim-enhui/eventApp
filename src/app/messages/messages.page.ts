@@ -1,12 +1,13 @@
 import { Component, OnInit } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
 import { NavController } from "@ionic/angular";
-import { AuthService } from "../auth/auth.service";
 import { AngularFirestore } from "@angular/fire/firestore";
 import { Store, select } from "@ngrx/store";
 import * as fromAppReducer from "../store/app.reducer";
+import * as fromAppActions from "../store/app.actions";
 
 import { messagesJoin } from "../utils/join.utils";
+import { Router } from "@angular/router";
+import { IMessage } from "../model/message.interface";
 
 @Component({
   selector: "app-messages",
@@ -20,55 +21,30 @@ export class MessagesPage implements OnInit {
   constructor(
     private store: Store<fromAppReducer.AppState>,
     private navCtrl: NavController,
-    private afs: AngularFirestore
+    private afs: AngularFirestore,
+    private router: Router
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.store.pipe(select(fromAppReducer.selectUserId)).subscribe(userId => {
+      this.userId = userId;
+    });
+
+    this.store
+      .pipe(select(fromAppReducer.selectMessages))
+      .subscribe((messages: IMessage[]) => {
+        this.messages = messages;
+      });
+  }
 
   ionViewWillEnter() {
     console.log("ion enter");
-    this.store.pipe(select(fromAppReducer.selectUserId)).subscribe(userId => {
-      this.userId = userId;
-      this.loadMessages(userId);
-      // this.afs
-      //   .doc(`users/${userId}/private/inbox`)
-      //   .valueChanges()
-      //   .pipe(messagesJoin(this.afs))
-      //   .subscribe((data: any) => {
-      //     // this.messages = data.messages;
-      //     console.log(data);
-      //   });
-    });
-  }
-
-  ionViewWillLeave() {
-    console.log("ion leave");
-  }
-
-  loadMessages(userId) {
-    this.afs.firestore
-      .doc(`users/${userId}/private/inbox`)
-      .get()
-      .then(docSnapshot => {
-        if (docSnapshot.exists) {
-          this.afs
-            .doc(`users/${userId}/private/inbox`)
-            .valueChanges()
-            .pipe(messagesJoin(this.afs))
-            .subscribe((data: any) => {
-              this.messages = data.messages;
-            });
-        } else {
-          this.afs.doc(`users/${userId}/private/inbox`).set({
-            messages: []
-          });
-        }
-      });
+    this.store.dispatch(fromAppActions.loadMessages());
   }
 
   openMessage(id) {
     console.log("Open Message");
-    this.navCtrl.navigateForward("/message/" + id);
+    this.router.navigate(["/message/" + id]);
   }
 
   navigateTo(url) {

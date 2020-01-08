@@ -20,7 +20,10 @@
         >
           <ion-item *ngIf="last">
             <ion-avatar slot="start" class="ion-margin-top">
-              <ion-img [src]="message?.chats[index]?.uid?.photoUrl"></ion-img>
+              <ion-img
+                [src]="(message?.recipients | getRecipient : userId |
+              async)?.photoUrl"
+              ></ion-img>
             </ion-avatar>
             <ion-label>
               <div class="is-flex is-space-between is-baseline ion-padding sm">

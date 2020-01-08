@@ -1,7 +1,12 @@
 <ion-header>
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
-      <ion-back-button></ion-back-button>
+      <ion-icon
+        name="arrow-back"
+        size="large"
+        style="padding: 0.75rem;"
+        (click)="navigateTo('tabs/messages')"
+      ></ion-icon>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>

@@ -16,7 +16,7 @@ export class AddContactPage implements OnInit {
   public contacts;
   public existingContacts: Array<string>;
   public searchInput = "";
-  public searchInput$ = new Subject();
+  public searchInput$ = new Subject<string>();
   public userId: string;
   constructor(
     private store: Store<fromAppReducer.AppState>,
@@ -58,14 +58,16 @@ export class AddContactPage implements OnInit {
   loadContacts() {
     let fetchContacts = this.afs.collection("search").valueChanges();
 
-    combineLatest(fetchContacts, this.searchInput$).subscribe(data => {
-      this.contacts = [
-        data[0].find((el: any) => {
-          return el.displayName.toLowerCase().includes(data[1]);
-        })
-      ];
-      console.log(this.contacts);
-    });
+    combineLatest(fetchContacts, this.searchInput$).subscribe(
+      ([fetchContacts, input]) => {
+        this.contacts = [
+          fetchContacts.find((el: any) => {
+            let input_lowercase = input.toLowerCase();
+            return el.displayName.toLowerCase().includes(input_lowercase);
+          })
+        ];
+      }
+    );
   }
 
   addContact(contact) {

@@ -1,16 +1,15 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from "@angular/core";
 
-import { of } from "rxjs";
-import { AuthService } from "../auth/auth.service";
 import { AngularFirestore } from "@angular/fire/firestore";
 import { firestore } from "firebase";
 import { ActivatedRoute } from "@angular/router";
-import { mergeMap } from "rxjs/operators";
 import { messageJoin } from "../utils/join.utils";
 import { Store, select } from "@ngrx/store";
 import * as fromAppReducer from "../store/app.reducer";
 import * as firebase from "firebase";
 import { IUser } from "../model/user.interface";
+import { NavController } from "@ionic/angular";
+import * as fromAppActions from "../store/app.actions";
 
 @Component({
   selector: "app-message",
@@ -28,9 +27,9 @@ export class MessagePage implements OnInit, AfterViewInit {
   @ViewChild("messageContainer", { static: false }) messageContainer;
 
   constructor(
-    private authService: AuthService,
     private afs: AngularFirestore,
     private route: ActivatedRoute,
+    private navCtrl: NavController,
     private store: Store<fromAppReducer.AppState>
   ) {}
 
@@ -53,24 +52,27 @@ export class MessagePage implements OnInit, AfterViewInit {
       .valueChanges()
       .pipe(messageJoin(this.afs))
       .subscribe((response: any) => {
-        console.log(response);
         this.messages = response.chats;
-        console.log(response.chats);
+        this.messageContainer.scrollToBottom();
         if (response.chats.length === 0) {
           this.boolAddUserToMessage = true;
           let recipientIndex = response.recipients.findIndex(el => {
-            console.log(el);
-            console.log(this.userId);
             return el.uid !== this.userId;
           });
 
-          console.log(recipientIndex);
           let recipientIdArray = response.recipients.splice(recipientIndex, 1);
-          console.log(recipientIdArray);
           this.recipient = recipientIdArray.pop();
-          console.log(this.recipient.uid);
         }
       });
+  }
+
+  ionViewDidEnter() {
+    this.messageContainer.scrollToBottom();
+  }
+
+  navigateTo(url) {
+    this.store.dispatch(fromAppActions.loadMessages());
+    this.navCtrl.navigateRoot(["/" + url]);
   }
 
   async sendMsg() {
@@ -104,6 +106,7 @@ export class MessagePage implements OnInit, AfterViewInit {
       chats: firestore.FieldValue.arrayUnion(data)
     });
 
+    this.messageContainer.scrollToBottom();
     this.editorMsg = "";
   }
 }

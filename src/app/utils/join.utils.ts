@@ -1,6 +1,7 @@
 import { AngularFirestore } from "@angular/fire/firestore";
 import { defer, of, combineLatest } from "rxjs";
 import { map, switchMap, mergeMap, exhaustMap } from "rxjs/operators";
+import * as _ from "lodash";
 
 export const itemsJoin = (afs: AngularFirestore) => {
   return source =>
@@ -104,6 +105,7 @@ export const messagesJoin = (afs: AngularFirestore) => {
       return source.pipe(
         exhaustMap((payload: any) => {
           parent = payload;
+          console.log(payload);
           let messageDoc$ = [];
           if (payload.messages.length !== 0) {
             payload.messages.forEach(element => {
@@ -113,9 +115,11 @@ export const messagesJoin = (afs: AngularFirestore) => {
                   .snapshotChanges()
                   .pipe(
                     map(actions => {
-                      const id = actions.payload.id;
-                      const data: any = actions.payload.data();
-                      return { id, ...data };
+                      let id = actions.payload.id;
+                      let data: any = actions.payload.data();
+                      console.log(id);
+                      // console.log(actions.payload.data());
+                      return { ...data, id: id };
                     })
                   )
               );
