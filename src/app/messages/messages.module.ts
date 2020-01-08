@@ -1,15 +1,16 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Routes, RouterModule } from '@angular/router';
+import { NgModule } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
+import { Routes, RouterModule } from "@angular/router";
 
-import { IonicModule } from '@ionic/angular';
+import { IonicModule } from "@ionic/angular";
 
-import { MessagesPage } from './messages.page';
+import { MessagesPage } from "./messages.page";
+import { getRecipientPipe } from "./recipients.pipe";
 
 const routes: Routes = [
   {
-    path: '',
+    path: "",
     component: MessagesPage
   }
 ];
@@ -21,6 +22,6 @@ const routes: Routes = [
     IonicModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [MessagesPage]
+  declarations: [MessagesPage, getRecipientPipe]
 })
 export class MessagesPageModule {}

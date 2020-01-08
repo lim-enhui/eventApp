@@ -1,0 +1,89 @@
+export const messagesJoin = (afs: AngularFirestore) => {
+  return source =>
+    defer(() => {
+      let parent;
+      let messages;
+      let users;
+      return source.pipe(
+        mergeMap(payload => {
+          parent = payload;
+          console.log(payload);
+          if (Array.isArray(payload["messages"])) {
+            console.log("messages is array");
+            console.log(payload["messages"]);
+            let messageDoc$ = [];
+            payload["messages"].forEach(element => {
+              messageDoc$.push(
+                afs
+                  .doc(`message/${element}`)
+                  .snapshotChanges()
+                  .pipe(
+                    map(actions => {
+                      const id = actions.payload.id;
+                      const data: any = actions.payload.data();
+                      return { id, ...data };
+                    })
+                  )
+              );
+            });
+            console.log(messageDoc$);
+            return combineLatest(messageDoc$);
+          }
+          return of(payload);
+        }),
+        mergeMap(payload => {
+          messages = payload;
+          console.log(payload);
+          if (Array.isArray(payload)) {
+            console.log("is payload");
+            let userArray: Array<any> = [];
+            let userDoc$ = [];
+            for (let i = 0; i < payload.length; i++) {
+              for (let j = 0; j < payload[i]["chats"].length; j++) {
+                userArray.push(payload[i]["chats"][j].uid);
+              }
+            }
+            userArray = Array.from(new Set(userArray));
+            console.log(userArray);
+            userArray = userArray.filter(el => {
+              return typeof el === "string";
+            });
+
+            console.log(userArray);
+
+            userArray.forEach(uid => {
+              userDoc$.push(afs.doc(`users/${uid}`).valueChanges());
+            });
+            console.log(userDoc$);
+            if (userDoc$.length === 0) {
+              return of(payload);
+            }
+            return combineLatest(userDoc$);
+          }
+        }),
+        mergeMap(payload => {
+          users = payload;
+          console.log(payload);
+          console.log(messages);
+          for (let k = 0; k < messages.length; k++) {
+            for (let j = 0; j < messages[k].chats.length; j++) {
+              messages[k].chats[j].uid = users.find(
+                ({ uid }) => uid === messages[k].chats[j].uid
+              );
+            }
+          }
+          console.log(messages);
+
+          for (let i = 0; i < parent["messages"].length; i++) {
+            console.log(parent["messages"][i]);
+            parent["messages"][i] = messages.find(
+              ({ id }) => id === parent["messages"][i]
+            );
+            console.log(parent["messages"][i]);
+          }
+          console.log(parent);
+          return of(parent);
+        })
+      );
+    });
+};

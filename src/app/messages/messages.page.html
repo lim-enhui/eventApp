@@ -20,26 +20,27 @@
         >
           <ion-item *ngIf="last">
             <ion-avatar slot="start" class="ion-margin-top">
-              <ion-img [src]="message.chats[index].uid.photoUrl"></ion-img>
+              <ion-img [src]="message?.chats[index]?.uid?.photoUrl"></ion-img>
             </ion-avatar>
             <ion-label>
               <div class="is-flex is-space-between is-baseline ion-padding sm">
                 <h2 class="ion-align-self-start">
-                  {{ message.chats[index].uid.displayName }}
+                  {{ (message?.recipients | getRecipient : userId |
+                  async)?.displayName }}
                 </h2>
                 <span class="ion-align-self-start text-right">
                   <p class="date-format">
-                    {{ message.chats[index].createdAt | date: "mediumDate" }}
+                    {{ message?.chats[index]?.createdAt | date: "mediumDate" }}
                   </p>
                   <p class="date-format">
-                    <small>{{
-                      message.chats[index].createdAt | date: "shortTime"
-                    }}</small>
+                    <small>
+                      {{ message?.chats[index]?.createdAt | date: "shortTime" }}
+                    </small>
                   </p>
                 </span>
               </div>
               <p class="ion-padding-start">
-                {{ message.chats[index].content }}
+                {{ message?.chats[index]?.content }}
               </p>
             </ion-label>
           </ion-item>
@@ -55,7 +56,7 @@
             ></ion-icon>
           </ion-avatar>
           <ion-label>
-            <p>You missed a conversation!</p>
+            <p>You have not start a conversation!</p>
           </ion-label>
         </ion-item>
       </ng-template>

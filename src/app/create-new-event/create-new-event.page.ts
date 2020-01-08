@@ -8,10 +8,10 @@ import {
 } from "@ionic/angular";
 import * as moment from "moment";
 import { Store, select } from "@ngrx/store";
+import * as fromAppReducer from "../store/app.reducer";
 
 import { AngularFirestore } from "@angular/fire/firestore";
 
-import * as fromAppReducer from "../store/app.reducer";
 import { GeolocationService } from "../shared/geolocation.service";
 import { exhaustMap, switchMap } from "rxjs/operators";
 import { HttpClient } from "@angular/common/http";

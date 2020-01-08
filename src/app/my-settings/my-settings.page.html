@@ -14,11 +14,12 @@
     <ion-item>
       <ion-label>
         <ion-avatar>
-          <ion-img [src]="userImage"></ion-img>
+          <ion-img *ngIf="!attachedImage" [src]="userImage"></ion-img>
+          <ion-img *ngIf="attachedImage" [src]="selectedViewImage"></ion-img>
         </ion-avatar>
       </ion-label>
 
-      <ion-button fill="outline" (click)="openFileChooser()">
+      <ion-button fill="outline" (click)="addImageFromDevice()">
         Upload a new photo
       </ion-button>
     </ion-item>

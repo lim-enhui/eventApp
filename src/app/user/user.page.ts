@@ -37,8 +37,6 @@ export class UserPage implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.loadUser();
-
     this.store
       .pipe(
         select(fromAppReducer.selectGeolocation),
@@ -56,6 +54,10 @@ export class UserPage implements OnInit {
       });
   }
 
+  ionViewWillEnter() {
+    this.loadUser();
+  }
+
   loadUser() {
     this.store
       .pipe(select(fromAppReducer.selectUserId))
@@ -67,8 +69,15 @@ export class UserPage implements OnInit {
       )
       .valueChanges()
       .subscribe(userData => {
-        this.userImage = userData.photoUrl;
-        this.userDisplayName = userData.displayName;
+        console.log(userData);
+        this.userImage =
+          userData.photoUrl === ""
+            ? "assets/img/default_profile.jpg"
+            : userData.photoUrl;
+        this.userDisplayName =
+          userData.displayName === null || userData.displayName === ""
+            ? "Anonymous"
+            : userData.displayName;
         this.userEmail = userData.email;
       });
   }

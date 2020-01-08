@@ -2,6 +2,12 @@ import { Component, OnInit } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { CallNumber } from "@ionic-native/call-number/ngx";
 import { Router } from "@angular/router";
+import { AngularFirestore } from "@angular/fire/firestore";
+import { Store, select } from "@ngrx/store";
+import * as fromAppReducer from "../store/app.reducer";
+import { usersJoin } from "../utils/join.utils";
+import * as firebase from "firebase";
+
 @Component({
   selector: "app-contacts",
   templateUrl: "./contacts.page.html",
@@ -9,41 +15,52 @@ import { Router } from "@angular/router";
 })
 export class ContactsPage implements OnInit {
   public contacts;
+  public userId;
 
   constructor(
     private http: HttpClient,
     private callNumber: CallNumber,
-    private router: Router
+    private router: Router,
+    private afs: AngularFirestore,
+    private store: Store<fromAppReducer.AppState>
   ) {}
 
   ngOnInit() {
+    this.store
+      .pipe(select(fromAppReducer.selectUserId))
+      .subscribe(userId => (this.userId = userId));
+
     this.loadContacts();
   }
 
   loadContacts() {
-    this.http.get("https://randomuser.me/api/?results=50").subscribe(res => {
-      this.contacts = res["results"].sort((a, b) => {
-        if (a.name.last < b.name.last) {
-          return -1;
+    this.afs.firestore
+      .doc(`users/${this.userId}/private/contacts`)
+      .get()
+      .then(docSnapshot => {
+        if (docSnapshot.exists) {
+          this.afs
+            .doc(`users/${this.userId}/private/contacts`)
+            .valueChanges()
+            .pipe(usersJoin(this.afs))
+            .subscribe(contacts => {
+              this.contacts = contacts;
+            });
+        } else {
+          this.afs.doc(`users/${this.userId}/private/contacts`).set({
+            users: []
+          });
         }
-
-        if (a.name.last > b.name.last) {
-          return 1;
-        }
-
-        return 0;
       });
-      console.log(this.contacts);
-    });
   }
 
   seperateLetter(record, recordIndex, records) {
     if (recordIndex == 0) {
-      return record.name.last[0].toUpperCase();
+      return record.displayName[0].toUpperCase();
     }
 
-    let first_prev = records[recordIndex - 1].name.last[0];
-    let first_current = record.name.last[0];
+    let first_prev = records[recordIndex - 1].displayName[0];
+    let first_current = record.displayName[0];
 
     if (first_prev != first_current) {
       return first_current.toUpperCase();
@@ -56,6 +73,36 @@ export class ContactsPage implements OnInit {
       .callNumber(contactNumber, true)
       .then(res => console.log("Launched dialer!", res))
       .catch(err => console.log("Error launching dialer", err));
+  }
+
+  textContact(userId) {
+    console.log(userId);
+    // this.navigateTo("message/9K257FZcnOX6pBAJ0XDz");
+    this.afs
+      .collection(`message`)
+      .add({
+        chats: [],
+        recipients: [userId, this.userId]
+      })
+      .then(doc => {
+        console.log(doc);
+        this.afs.firestore
+          .doc(`users/${this.userId}/private/inbox`)
+          .get()
+          .then(docSnapshot => {
+            if (docSnapshot.exists) {
+              this.afs.doc(`users/${this.userId}/private/inbox`).update({
+                messages: firebase.firestore.FieldValue.arrayUnion(doc.id)
+              });
+            } else {
+              this.afs.doc(`users/${this.userId}/private/inbox`).set({
+                messages: firebase.firestore.FieldValue.arrayUnion(doc.id)
+              });
+            }
+
+            this.navigateTo(`message/${doc.id}`);
+          });
+      });
   }
 
   navigateTo(page) {

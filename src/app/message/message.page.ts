@@ -4,6 +4,13 @@ import { of } from "rxjs";
 import { AuthService } from "../auth/auth.service";
 import { AngularFirestore } from "@angular/fire/firestore";
 import { firestore } from "firebase";
+import { ActivatedRoute } from "@angular/router";
+import { mergeMap } from "rxjs/operators";
+import { messageJoin } from "../utils/join.utils";
+import { Store, select } from "@ngrx/store";
+import * as fromAppReducer from "../store/app.reducer";
+import * as firebase from "firebase";
+import { IUser } from "../model/user.interface";
 
 @Component({
   selector: "app-message",
@@ -13,12 +20,18 @@ import { firestore } from "firebase";
 export class MessagePage implements OnInit, AfterViewInit {
   public messages: Array<any>;
   public editorMsg: string;
+  public messageId: string;
+  public userId: string;
+  public boolAddUserToMessage: boolean = false;
+  public recipient: IUser;
 
   @ViewChild("messageContainer", { static: false }) messageContainer;
 
   constructor(
     private authService: AuthService,
-    private afs: AngularFirestore
+    private afs: AngularFirestore,
+    private route: ActivatedRoute,
+    private store: Store<fromAppReducer.AppState>
   ) {}
 
   ngAfterViewInit() {
@@ -27,74 +40,68 @@ export class MessagePage implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    const source = of([
-      {
-        user: "me",
-        message: "Hello",
-        timestamp: "11 Jan 2019 11:00pm"
-      },
-      {
-        user: "friend",
-        message: "Hello",
-        timestamp: "11 Jan 2019 11:01pm"
-      },
-      {
-        user: "me",
-        message:
-          "How are you? I am going to start writing nonsense to better guage the UI.",
-        timestamp: "11 Jan 2019 11:02pm"
-      },
-      {
-        user: "friend",
-        timestamp: "11 Jan 2019 11:03pm",
-        message:
-          "I'm fine. I am going to type a really long text to see how would the interface be like."
-      },
-      {
-        user: "me",
-        message: "Hello",
-        timestamp: "11 Jan 2019 11:04pm"
-      },
-      {
-        user: "friend",
-        message: "Hello",
-        timestamp: "11 Jan 2019 11:05pm"
-      },
-      {
-        user: "me",
-        timestamp: "11 Jan 2019 11:06pm",
-        message:
-          "How are you? I am going to start writing nonsense to better guage the UI."
-      },
-      {
-        user: "friend",
-        timestamp: "11 Jan 2019 11:07pm",
-        message:
-          "I'm fine. I am going to type a really long text to see how would the interface be like."
-      }
-    ]);
+    this.store
+      .pipe(select(fromAppReducer.selectUserId))
+      .subscribe(userId => (this.userId = userId));
 
-    source.subscribe(response => {
-      this.messages = response;
+    this.route.paramMap.subscribe(params => {
+      this.messageId = params.get("id");
     });
+
+    this.afs
+      .doc(`message/${this.messageId}`)
+      .valueChanges()
+      .pipe(messageJoin(this.afs))
+      .subscribe((response: any) => {
+        console.log(response);
+        this.messages = response.chats;
+        console.log(response.chats);
+        if (response.chats.length === 0) {
+          this.boolAddUserToMessage = true;
+          let recipientIndex = response.recipients.findIndex(el => {
+            console.log(el);
+            console.log(this.userId);
+            return el.uid !== this.userId;
+          });
+
+          console.log(recipientIndex);
+          let recipientIdArray = response.recipients.splice(recipientIndex, 1);
+          console.log(recipientIdArray);
+          this.recipient = recipientIdArray.pop();
+          console.log(this.recipient.uid);
+        }
+      });
   }
 
   async sendMsg() {
     console.log(this.editorMsg);
-    let chatId = "6rMqgiaCczSQlnuW78Fh";
-    this.authService.userId.subscribe(uid => {
-      const data = {
-        uid,
-        content: this.editorMsg,
-        createdAt: Date.now()
-      };
-      console.log(uid);
-      if (uid) {
-        const ref = this.afs.collection("message").doc(chatId);
-        return ref.update({
-          chats: firestore.FieldValue.arrayUnion(data)
+    // let chatId = "6rMqgiaCczSQlnuW78Fh";
+    const data = {
+      uid: this.userId,
+      content: this.editorMsg,
+      createdAt: Date.now()
+    };
+
+    if (this.boolAddUserToMessage) {
+      this.afs.firestore
+        .doc(`users/${this.recipient.uid}/private/inbox`)
+        .get()
+        .then(docSnapshot => {
+          if (docSnapshot.exists) {
+            this.afs.doc(`users/${this.recipient.uid}/private/inbox`).update({
+              messages: firebase.firestore.FieldValue.arrayUnion(this.messageId)
+            });
+          } else {
+            this.afs.doc(`users/${this.userId}/private/inbox`).set({
+              messages: [this.messageId]
+            });
+          }
         });
-      }
+    }
+
+    const ref = this.afs.collection("message").doc(this.messageId);
+    ref.update({
+      chats: firestore.FieldValue.arrayUnion(data)
     });
 
     this.editorMsg = "";

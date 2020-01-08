@@ -24,7 +24,13 @@
             style="align-items: center; display: flex; justify-content: center;"
           >
             <img
+              *ngIf="user?.photoUrl === null"
               src="assets/img/default_profile.jpg"
+              style="width: 70%; height: 70%;"
+            />
+            <img
+              *ngIf="!(user?.photoUrl === null)"
+              [src]="user?.photoUrl"
               style="width: 70%; height: 70%;"
             />
           </ion-avatar>
@@ -227,6 +233,7 @@
                 name="call"
                 *ngIf="!(user?.phoneNumber === null)"
                 size="large"
+                (click)="onClick('call')"
                 style="margin: 8px 0px;"
                 class="default-icon-color"
               ></ion-icon>
@@ -238,8 +245,8 @@
                 style="margin: 8px 0px;"
                 class="default-icon-color"
               ></ion-icon>
-              <ion-label *ngIf="user?.phoneNumber === 'null'">Call</ion-label>
-              <ion-label *ngIf="!(user?.phoneNumber === 'null')"
+              <ion-label *ngIf="!(user?.phoneNumber === null)">Call</ion-label>
+              <ion-label *ngIf="user?.phoneNumber === null"
                 >Call Disabled</ion-label
               >
             </div>

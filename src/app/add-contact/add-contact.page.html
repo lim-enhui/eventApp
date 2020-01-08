@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar color="primary">
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
@@ -22,7 +22,14 @@
 
     <ion-item *virtualItem="let contact">
       <ion-avatar slot="start">
-        <ion-img [src]="contact.photoUrl"></ion-img>
+        <ion-img
+          *ngIf="contact.photoUrl === null"
+          src="assets/img/default.jpg"
+        ></ion-img>
+        <ion-img
+          *ngIf="contact.photoUrl !== null"
+          [src]="contact.photoUrl"
+        ></ion-img>
       </ion-avatar>
       <ion-label>
         <h2 class="ion-text-capitalize">
@@ -30,7 +37,17 @@
         </h2>
         <p>{{ contact.email }}</p>
       </ion-label>
-      <ion-icon name="add" slot="end" (click)="addContact(contact)"></ion-icon>
+      <ion-icon
+        *ngIf="!(existingContacts.indexOf(contact.uid) > -1) && contact.uid !== userId; else addedTemplate"
+        name="add"
+        slot="end"
+        (click)="addContact(contact)"
+      ></ion-icon>
+      <ng-template #addedTemplate>
+        <ion-chip color="success" outline="true">
+          <ion-label color="success">Added</ion-label>
+        </ion-chip>
+      </ng-template>
     </ion-item>
   </ion-virtual-scroll>
 </ion-content>

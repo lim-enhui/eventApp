@@ -57,13 +57,6 @@ export class EventRegistrationPage implements OnInit {
   onClick(type) {
     if (type === "email") {
       console.log("email");
-    } else if (type === "call") {
-      this.callNumber
-        .callNumber(this.user.phoneNumber.toString(), true)
-        .then(res => console.log("Launched dialer!", res))
-        .catch(err => console.log("Error launching dialer", err));
-    } else {
-      console.log("message");
       this.socialSharing
         .canShareViaEmail()
         .then(() => {
@@ -78,6 +71,13 @@ export class EventRegistrationPage implements OnInit {
           // Sharing via email is not possible
           console.error("error");
         });
+    } else if (type === "call") {
+      this.callNumber
+        .callNumber(this.user.phoneNumber.toString(), true)
+        .then(res => console.log("Launched dialer!", res))
+        .catch(err => console.log("Error launching dialer", err));
+    } else {
+      console.log("message");
     }
   }
 }

@@ -1,8 +1,11 @@
 import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
-import { HttpClient } from "@angular/common/http";
+import { Store, select } from "@ngrx/store";
+import * as fromAppReducer from "../store/app.reducer";
+
 import { Subject, combineLatest } from "rxjs";
 import { AngularFirestore } from "@angular/fire/firestore";
+import * as firebase from "firebase";
 
 @Component({
   selector: "app-add-contact",
@@ -11,12 +14,38 @@ import { AngularFirestore } from "@angular/fire/firestore";
 })
 export class AddContactPage implements OnInit {
   public contacts;
+  public existingContacts: Array<string>;
   public searchInput = "";
   public searchInput$ = new Subject();
-
-  constructor(private http: HttpClient, private afs: AngularFirestore) {}
+  public userId: string;
+  constructor(
+    private store: Store<fromAppReducer.AppState>,
+    private afs: AngularFirestore
+  ) {}
 
   ngOnInit() {
+    this.store
+      .pipe(select(fromAppReducer.selectUserId))
+      .subscribe(userId => (this.userId = userId));
+
+    this.afs.firestore
+      .doc(`users/${this.userId}/private/contacts`)
+      .get()
+      .then(docSnapshot => {
+        if (!docSnapshot.exists) {
+          this.afs.doc(`users/${this.userId}/private/contacts`).set({
+            users: []
+          });
+        } else {
+          this.existingContacts = docSnapshot.get("users");
+          this.afs
+            .doc(`users/${this.userId}/private/contacts`)
+            .valueChanges()
+            .subscribe((data: any) => {
+              this.existingContacts = data.users;
+            });
+        }
+      });
     this.loadContacts();
   }
 
@@ -40,8 +69,8 @@ export class AddContactPage implements OnInit {
   }
 
   addContact(contact) {
-    console.log(contact);
-    // this.afs.doc(`/users/${}`)
-    //  set request on pending...
+    this.afs.doc(`users/${this.userId}/private/contacts`).update({
+      users: firebase.firestore.FieldValue.arrayUnion(contact.uid)
+    });
   }
 }

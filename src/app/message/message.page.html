@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar color="primary">
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
@@ -8,12 +8,19 @@
 
 <ion-content #messageContainer class="ion-padding">
   <div #messageContainer *ngFor="let list of messages">
-    <div class="is-flex" [class]="list.user === 'me' ? 'ion-text-end' : ''">
-      <p class="chat-title">{{ list.user }}</p>
+    <div
+      class="is-flex"
+      [class]="(list.uid).uid === userId ? 'ion-text-end' : ''"
+    >
+      <p class="chat-title">{{ (list.uid).displayName }}</p>
 
-      <div [class]="list.user === 'me' ? 'chat-message-me' : 'chat-message'">
-        {{ list.message }}
-        <div class="is-extra-small is-timestamp">{{ list.timestamp }}</div>
+      <div
+        [class]="(list.uid).uid === userId ? 'chat-message-me' : 'chat-message'"
+      >
+        {{ list.content }}
+        <div class="is-extra-small is-timestamp">
+          {{ list.createdAt | date:'medium' }}
+        </div>
       </div>
     </div>
   </div>
@@ -28,8 +35,12 @@
       class="chat-input"
     >
     </ion-textarea>
-    <ion-button icon (click)="sendMsg()" class="ion-text-end">
-      <ion-icon name="send" slot="icon-only"></ion-icon>
-    </ion-button>
+    <ion-icon
+      name="send"
+      slot="icon-only"
+      size="large"
+      (click)="sendMsg()"
+      style="margin-right: 8px;"
+    ></ion-icon>
   </div>
 </ion-footer>
