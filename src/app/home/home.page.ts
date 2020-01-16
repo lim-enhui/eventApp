@@ -8,6 +8,7 @@ import { Observable } from "rxjs";
 import { IEvent } from "../model/event.interface";
 import { map, switchMap } from "rxjs/operators";
 import { distanceInKmBetweenEarthCoordinates } from "../utils/utils";
+import * as moment from "moment";
 
 @Component({
   selector: "app-home",
@@ -60,25 +61,20 @@ export class HomePage implements OnInit {
       .subscribe((events: IEvent[]) => {
         console.log(events);
         this.allEvents = events.filter(element => {
-          return Date.parse(element.eventstartdate) >= Date.now();
+          return (
+            moment(element.eventstartdate).format("DD MMM YYYY") >=
+            moment().format("DD MMM YYYY")
+          );
         });
 
         this.events = events.filter(element => {
           return (
             +element.distance < +this.distance &&
-            Date.parse(element.eventstartdate) >= Date.now()
+            moment(element.eventstartdate).format("DD MMM YYYY") >=
+              moment().format("DD MMM YYYY")
           );
         });
       });
-
-    // this.events$ = this.store.pipe(select(fromAppReducer.selectEvents));
-
-    // .subscribe((geolocation: { latitude: number; longitude: number }) => {
-    //   this.latitude = geolocation.latitude;
-    //   this.longitude = geolocation.longitude;
-    //   console.log(this.latitude);
-    //   console.log(this.longitude);
-    // });
   }
 
   updateEvents() {
@@ -131,7 +127,27 @@ export class HomePage implements OnInit {
   }
 
   radioSelect(event) {
-    console.log("radioSelect", event.detail);
+    console.log("radioSelect", event.detail.value);
+    if (event.detail.value === "all") {
+      this.events = this.allEvents.filter(
+        element => element.distance < +this.distance
+      );
+    } else if (event.detail.value === "weekly") {
+      this.events = this.allEvents.filter(
+        element =>
+          element.distance < +this.distance &&
+          element.eventmode === event.detail.value
+      );
+    } else {
+      this.events = this.allEvents.filter(element => {
+        console.log(element);
+        return (
+          element.distance < +this.distance &&
+          moment(element.eventstartdate).format("DD MMM YYYY") ==
+            moment().format("DD MMM YYYY")
+        );
+      });
+    }
   }
 
   navigatePush(page) {

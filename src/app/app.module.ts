@@ -8,6 +8,7 @@ import { AngularFireAuthModule } from "@angular/fire/auth";
 import { AngularFireStorageModule } from "@angular/fire/storage";
 import { AngularFirestoreModule } from "@angular/fire/firestore";
 import { AngularFireDatabaseModule } from "@angular/fire/database";
+import { AngularFireFunctionsModule } from "@angular/fire/functions";
 
 import { IonicModule, IonicRouteStrategy } from "@ionic/angular";
 import { SplashScreen } from "@ionic-native/splash-screen/ngx";
@@ -24,6 +25,7 @@ import { Geolocation } from "@ionic-native/geolocation/ngx";
 import { SocialSharing } from "@ionic-native/social-sharing/ngx";
 import { YoutubeVideoPlayer } from "@ionic-native/youtube-video-player/ngx";
 import { Camera } from "@ionic-native/camera/ngx";
+import { Contacts } from "@ionic-native/contacts/ngx";
 
 import { AppComponent } from "./app.component";
 import { AppRoutingModule } from "./app-routing.module";
@@ -66,6 +68,7 @@ const firebaseConfig = {
     AngularFirestoreModule,
     AngularFireStorageModule,
     AngularFireDatabaseModule,
+    AngularFireFunctionsModule,
     QRCodeModule
   ],
   providers: [
@@ -81,6 +84,7 @@ const firebaseConfig = {
     FileChooser,
     File,
     CallNumber,
+    Contacts,
     Geolocation,
     SocialSharing,
     YoutubeVideoPlayer,

@@ -129,6 +129,12 @@ export class QrScannerPage implements OnInit {
       });
   }
 
+  public openContactCard(item) {
+    alert("Contact");
+    console.log(item);
+    this.router.navigate(["/user-card/" + item.id]);
+  }
+
   async presentProcessNextActionSheet(item) {
     const actionSheet = await this.actionSheetController.create({
       header: "Item Collection",
@@ -141,6 +147,8 @@ export class QrScannerPage implements OnInit {
             console.log("open clicked");
             if (item.type !== "contact") {
               this.openScannedItem(item);
+            } else {
+              this.openContactCard(item);
             }
             actionSheet.dismiss();
           }

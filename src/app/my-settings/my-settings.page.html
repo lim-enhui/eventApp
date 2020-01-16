@@ -70,6 +70,13 @@
         [(ngModel)]="userIsSearchable"
       ></ion-toggle>
     </ion-item>
+    <ion-item>
+      <ion-label>Recieve Notification from All Event</ion-label>
+      <ion-toggle
+        (ionChange)="notificationToggle($event)"
+        [(ngModel)]="notificationIsEnabled"
+      ></ion-toggle>
+    </ion-item>
   </ion-list>
 
   <ion-button

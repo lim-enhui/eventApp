@@ -33,6 +33,11 @@ export const updateEvents = createAction(
   props<{ events: IEvent[] }>()
 );
 
+export const loadDeviceToken = createAction(
+  "[App Component] Load Device Token",
+  props<{ token: string }>()
+);
+
 export const updateUserId = createAction(
   "[Auth Page] Update UserId",
   props<{ userId: string }>()

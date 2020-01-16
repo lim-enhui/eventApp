@@ -7,4 +7,5 @@ export interface IUser {
   phoneNumber?: number | null | string;
   company_school?: string;
   occupation?: string;
+  notificationIsEnabled?: boolean;
 }

@@ -1,0 +1,41 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>User Card</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content fullscreen>
+  <ion-card>
+    <img [src]="user?.photoUrl" />
+    <ion-card-header>
+      <ion-card-subtitle>Display Name</ion-card-subtitle>
+      <ion-card-title>{{user?.displayName}}</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-grid>
+        <ion-row>
+          <ion-col class="is-center is-flex">
+            <ion-icon
+              name="person-add"
+              size="large"
+              (click)="addContact('app')"
+            ></ion-icon>
+          </ion-col>
+          <ion-col class="is-center is-flex">
+            <ion-icon
+              name="download"
+              size="large"
+              (click)="addContact('native')"
+            ></ion-icon>
+          </ion-col>
+          <ion-col class="is-center is-flex">
+            <ion-icon name="chatbubbles" size="large"></ion-icon>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

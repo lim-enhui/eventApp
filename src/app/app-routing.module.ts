@@ -49,7 +49,8 @@ const routes: Routes = [
     loadChildren:
       "./event-registration/event-registration.module#EventRegistrationPageModule"
   },
-  { path: 'teleport', loadChildren: './teleport/teleport.module#TeleportPageModule' }
+  { path: 'teleport', loadChildren: './teleport/teleport.module#TeleportPageModule' },
+  { path: 'user-card', loadChildren: './user-card/user-card.module#UserCardPageModule' }
 ];
 
 @NgModule({

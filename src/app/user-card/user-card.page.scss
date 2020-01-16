@@ -1,0 +1,18 @@
+ion-avatar,
+ion-avatar > img {
+  border-radius: var(--border-radius, 50%);
+  height: 12rem;
+  width: 12rem;
+}
+
+.is-center {
+  align-items: center;
+}
+
+.is-flex {
+  display: flex;
+}
+
+.margin-top-large {
+  margin-top: 2rem;
+}

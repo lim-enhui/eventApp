@@ -11,8 +11,7 @@ const routes: Routes = [
   {
     path: ":id",
     component: MessagePage
-  },
-  {}
+  }
 ];
 
 @NgModule({

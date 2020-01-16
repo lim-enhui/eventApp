@@ -9,6 +9,7 @@ export interface AppState {
   userId: string;
   events: IEvent[];
   messages: IMessage[];
+  deviceToken: string;
 }
 
 const initialState: AppState = {
@@ -18,7 +19,8 @@ const initialState: AppState = {
   },
   userId: "",
   events: [],
-  messages: []
+  messages: [],
+  deviceToken: ""
 };
 
 export const appReducer = createReducer(
@@ -42,6 +44,12 @@ export const appReducer = createReducer(
     return {
       ...state,
       messages: payload.messages
+    };
+  }),
+  on(fromRoot.loadDeviceToken, (state, payload) => {
+    return {
+      ...state,
+      deviceToken: payload.token
     };
   }),
   on(fromRoot.updateGeoLocation, (state, payload) => {
@@ -71,6 +79,11 @@ export const selectUserId = createSelector(
 export const selectEvents = createSelector(
   selectApp,
   (state: AppState) => state.events
+);
+
+export const selectDeviceToken = createSelector(
+  selectApp,
+  (state: AppState) => state.deviceToken
 );
 
 export const selectMessages = createSelector(

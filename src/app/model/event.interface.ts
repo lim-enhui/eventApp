@@ -13,4 +13,5 @@ export interface IEvent {
   eventpostal: string;
   eventstartdate: string;
   distance?: number;
+  id?: string;
 }

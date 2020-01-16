@@ -9,15 +9,17 @@ import { AngularFirestore } from "@angular/fire/firestore";
  *   {{ 2 | exponentialStrength:10 }}
  *   formats to: 1024
  */
-@Pipe({ name: "getRecipient" })
-export class getRecipientPipe implements PipeTransform {
+@Pipe({ name: "getRecipientName" })
+export class getRecipientNamePipe implements PipeTransform {
   constructor(private afs: AngularFirestore) {}
   transform(users: Array<any>, userId?: string): any {
     let recipientId: string;
-    let userIndex = users.findIndex(el => el !== userId);
+    let _users = users.slice();
+    let userIndex = _users.findIndex(el => el !== userId);
 
-    users = users.splice(userIndex, 1);
-    recipientId = users.pop();
+    _users = _users.splice(userIndex, 1);
+    recipientId = _users.pop();
+    console.log("name", recipientId);
     return this.afs.doc(`users/${recipientId}`).valueChanges();
   }
 }

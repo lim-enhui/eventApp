@@ -13,6 +13,8 @@ import { AngularFirestore } from "@angular/fire/firestore";
 import { switchMap } from "rxjs/operators";
 
 import { environment } from "../../environments/environment";
+import { eventsJoin } from "../utils/join.utils";
+import { IEvent } from "../model/event.interface";
 
 @Component({
   selector: "app-user",
@@ -27,6 +29,7 @@ export class UserPage implements OnInit {
   public userCompany: string;
   public userSchool: string;
   public userAtLocation: string;
+  public events: Array<IEvent>;
 
   constructor(
     private http: HttpClient,
@@ -56,6 +59,28 @@ export class UserPage implements OnInit {
 
   ionViewWillEnter() {
     this.loadUser();
+
+    this.afs.firestore
+      .doc(`users/${this.userId}/private/events`)
+      .get()
+      .then(docSnapshot => {
+        if (docSnapshot.exists) {
+          console.log("exists");
+          this.afs
+            .doc(`users/${this.userId}/private/events`)
+            .valueChanges()
+            .pipe(eventsJoin(this.afs))
+            .subscribe((events: Array<IEvent>) => {
+              console.log(events);
+              this.events = events;
+            });
+        } else {
+          console.log("not exists");
+          this.afs.doc(`users/${this.userId}/private/events`).set({
+            createdevents: []
+          });
+        }
+      });
   }
 
   loadUser() {

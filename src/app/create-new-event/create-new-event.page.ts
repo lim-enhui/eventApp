@@ -300,6 +300,7 @@ export class CreateNewEventPage implements OnInit {
       )
       .subscribe((response: any) => {
         let postalCodeRegex = /[0-9]{6}/;
+        console.log(response);
         let strAddress = response.results[0].formatted_address;
 
         let postalAddress = postalCodeRegex.exec(strAddress)[0];

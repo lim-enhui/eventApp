@@ -183,3 +183,37 @@ export const messagesJoin = (afs: AngularFirestore) => {
       );
     });
 };
+
+export const eventsJoin = (afs: AngularFirestore) => {
+  return source =>
+    defer(() => {
+      return source.pipe(
+        switchMap((payload: { createdevents: Array<string> }) => {
+          console.log(payload.createdevents);
+          let eventsDoc$ = [];
+          if (
+            Array.isArray(payload.createdevents) &&
+            payload.createdevents.length > 0
+          ) {
+            payload.createdevents.forEach(element => {
+              eventsDoc$.push(
+                afs
+                  .doc(`events/${element}`)
+                  .snapshotChanges()
+                  .pipe(
+                    map(actions => {
+                      const id = actions.payload.id;
+                      const data: any = actions.payload.data();
+                      return { id, ...data };
+                    })
+                  )
+              );
+            });
+
+            return combineLatest(eventsDoc$);
+          }
+          return of([]);
+        })
+      );
+    });
+};

@@ -8,6 +8,10 @@ import { IUser } from "../model/user.interface";
 import { map } from "rxjs/operators";
 import { NativeHelpersService } from "../shared/native-helpers.service";
 import * as firebase from "firebase";
+import { ToastController } from "@ionic/angular";
+import * as fromAppReducer from "../store/app.reducer";
+import { Store, select } from "@ngrx/store";
+import { FcmService } from "../shared/fcm.service";
 
 @Component({
   selector: "app-my-settings",
@@ -30,14 +34,27 @@ export class MySettingsPage implements OnInit {
   public attachedImage: boolean = false;
   public dateLog: number = Date.now();
   public selectedImageFileFormat: string;
+  public notificationIsEnabled: boolean = false;
+  public deviceToken: string = "";
 
   constructor(
+    private store: Store<fromAppReducer.AppState>,
     private afs: AngularFirestore,
     private auth: AuthService,
-    private nativeHelpersService: NativeHelpersService
+    private nativeHelpersService: NativeHelpersService,
+    public toastController: ToastController,
+    private fcmService: FcmService
   ) {}
 
   ngOnInit() {
+    this.store
+      .pipe(select(fromAppReducer.selectDeviceToken))
+      .subscribe(token => {
+        console.log("device token");
+        console.log(token);
+        this.deviceToken = token;
+      });
+
     this.auth.userId
       .pipe(
         map(userId => {
@@ -65,8 +82,11 @@ export class MySettingsPage implements OnInit {
             photoUrl,
             email,
             occupation,
-            company_school
+            company_school,
+            notificationIsEnabled
           } = userData;
+
+          this.notificationIsEnabled = notificationIsEnabled ? true : false;
 
           this.userImage =
             photoUrl === "" ? "assets/img/default_profile.jpg" : photoUrl;
@@ -140,6 +160,10 @@ export class MySettingsPage implements OnInit {
     this.userIsSearchable = event.detail.checked;
   }
 
+  notificationToggle(event) {
+    this.notificationIsEnabled = event.detail.checked;
+  }
+
   async uploadTask(blobInfo: { fileBlob: Blob }) {
     let _uploadFileName;
 
@@ -169,12 +193,15 @@ export class MySettingsPage implements OnInit {
     this.selectedImageFile = selectedImageFile;
   }
 
-  async onSave() {
-    console.log("userDisplayName", this.userDisplayName);
-    console.log("userPhoneNumber", this.userPhoneNumber);
-    console.log("userEmail", this.userEmail);
-    console.log("userIsSearchable", this.userIsSearchable);
+  async presentToast() {
+    const toast = await this.toastController.create({
+      message: "Your user settings have been updated.",
+      duration: 2000
+    });
+    toast.present();
+  }
 
+  async onSave() {
     if (this.attachedImage) {
       let blobInfo: {
         fileBlob: Blob;
@@ -189,22 +216,34 @@ export class MySettingsPage implements OnInit {
       let fileExtension = getFilePath.split(".").pop();
       this.selectedImageFileFormat = fileExtension.split("?")[0];
 
+      if (this.notificationIsEnabled) {
+        this.fcmService.sub("events", this.deviceToken);
+      } else {
+        this.fcmService.unsub("events", this.deviceToken);
+      }
+
       this.userDoc.update({
         photoUrl: uri,
         displayName: this.userDisplayName,
         email: this.userEmail,
         phoneNumber: this.userPhoneNumber,
         occupation: this.userOccupation,
-        company_school: this.userCompanySchool
+        company_school: this.userCompanySchool,
+        notificationIsEnabled: this.notificationIsEnabled
       });
     } else {
-      this.userDoc.update({
-        displayName: this.userDisplayName,
-        email: this.userEmail,
-        phoneNumber: this.userPhoneNumber,
-        occupation: this.userOccupation,
-        company_school: this.userCompanySchool
-      });
+      this.userDoc
+        .update({
+          displayName: this.userDisplayName,
+          email: this.userEmail,
+          phoneNumber: this.userPhoneNumber,
+          occupation: this.userOccupation,
+          company_school: this.userCompanySchool,
+          notificationIsEnabled: this.notificationIsEnabled
+        })
+        .then(() => {
+          this.presentToast();
+        });
     }
 
     if (this.userIsSearchable) {

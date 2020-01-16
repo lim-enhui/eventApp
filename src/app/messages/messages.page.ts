@@ -5,9 +5,10 @@ import { Store, select } from "@ngrx/store";
 import * as fromAppReducer from "../store/app.reducer";
 import * as fromAppActions from "../store/app.actions";
 
-import { messagesJoin } from "../utils/join.utils";
+// import { messagesJoin } from "../utils/join.utils";
 import { Router } from "@angular/router";
 import { IMessage } from "../model/message.interface";
+import * as firebase from "firebase";
 
 @Component({
   selector: "app-messages",
@@ -45,6 +46,18 @@ export class MessagesPage implements OnInit {
   openMessage(id) {
     console.log("Open Message");
     this.router.navigate(["/message/" + id]);
+  }
+
+  deleteMessage(id) {
+    console.log(id);
+    this.afs
+      .doc(`users/${this.userId}/private/inbox`)
+      .update({
+        messages: firebase.firestore.FieldValue.arrayRemove(id)
+      })
+      .then(() => {
+        this.store.dispatch(fromAppActions.loadMessages());
+      });
   }
 
   navigateTo(url) {
