@@ -7,6 +7,7 @@ import * as fromAppReducer from "../store/app.reducer";
 import * as firebase from "firebase";
 import { NativeHelpersService } from "../shared/native-helpers.service";
 import { LoadingController, ToastController } from "@ionic/angular";
+import { isYoutubeLink } from "../utils/utils";
 
 enum FormTypeControl {
   DOCUMENT = "document",
@@ -209,6 +210,19 @@ export class CreateNewItemPage implements OnInit {
 
     let fileExtension = getFilePath.split(".").pop();
     this.selectedImageFileFormat = fileExtension.split("?")[0];
+    switch (true) {
+      case this.selectedImageFileFormat === "jpg":
+        break;
+      case this.selectedImageFileFormat === "jpeg":
+        break;
+      case this.selectedImageFileFormat === "png":
+        break;
+      case this.selectedImageFileFormat === "gif":
+        break;
+      default:
+        this.selectedImageFileFormat = "jpeg";
+        break;
+    }
 
     let blobInfo: {
       fileBlob: Blob;
@@ -275,16 +289,8 @@ export class CreateNewItemPage implements OnInit {
     });
   }
 
-  isYoutubeLink(url): { stat?: boolean; id?: string } {
-    var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
-    var match = url.match(regExp);
-    return match && match[7].length == 11
-      ? { stat: true, id: match[7] }
-      : { stat: false };
-  }
-
   async onYoutubeFormSubmit() {
-    let { stat, id } = this.isYoutubeLink(
+    let { stat, id } = isYoutubeLink(
       this.createYoutubeLinkForm.get("url").value
     );
 

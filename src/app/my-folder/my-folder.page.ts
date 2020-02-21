@@ -38,9 +38,8 @@ export class MyFolderPage implements OnInit {
   public yesterdayDate: Date = new Date();
 
   public isLoading: HTMLIonLoadingElement;
-  public itemFiles: Array<{ name: string; type: string; url: string }> | {};
+  public itemFiles: Array<{ name: string; type: string; url: string }>;
   public profileUrl: Observable<string | null>;
-  public meta: Observable<any>;
   private fileTransfer: FileTransferObject = this.transfer.create();
 
   constructor(
@@ -95,14 +94,15 @@ export class MyFolderPage implements OnInit {
       .doc(`users/${this.userId}/private/inventory`)
       .valueChanges()
       .pipe(itemsJoin(this.afs))
-      .subscribe(files => {
-        this.isLoading.dismiss();
-        console.log(files);
-        this.itemFiles = files;
-      });
+      .subscribe(
+        (files: Array<{ name: string; type: string; url: string }>) => {
+          this.isLoading.dismiss();
+          this.itemFiles = files;
+        }
+      );
   }
 
-  iconType(type) {
+  iconType(type: string) {
     switch (type) {
       case "image":
         return "image";
@@ -186,10 +186,6 @@ export class MyFolderPage implements OnInit {
     let toast;
 
     if (supported) {
-      // toast = await this.toastController.create({
-      //   message: "Loading Content. Please wait.",
-      //   duration: 2000
-      // });
       this.presentLoading();
     } else {
       toast = await this.toastController.create({
@@ -309,6 +305,7 @@ export class MyFolderPage implements OnInit {
           console.error("error");
         });
     } else {
+      console.log(item);
       const ref = this.storage.ref(
         `${item.name}_${item.createdAt}.${item.format}`
       );

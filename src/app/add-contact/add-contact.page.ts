@@ -1,9 +1,9 @@
 import { Component, OnInit } from "@angular/core";
-import { Router } from "@angular/router";
+
 import { Store, select } from "@ngrx/store";
 import * as fromAppReducer from "../store/app.reducer";
 
-import { Subject, combineLatest } from "rxjs";
+import { Subject, combineLatest, Observable } from "rxjs";
 import { AngularFirestore } from "@angular/fire/firestore";
 import * as firebase from "firebase";
 
@@ -13,9 +13,9 @@ import * as firebase from "firebase";
   styleUrls: ["./add-contact.page.scss"]
 })
 export class AddContactPage implements OnInit {
-  public contacts;
+  public contacts: any;
   public existingContacts: Array<string>;
-  public searchInput = "";
+  public searchInput: string = "";
   public searchInput$ = new Subject<string>();
   public userId: string;
   constructor(
@@ -56,12 +56,14 @@ export class AddContactPage implements OnInit {
   }
 
   loadContacts() {
-    let fetchContacts = this.afs.collection("search").valueChanges();
+    let fetchContacts: Observable<any> = this.afs
+      .collection("search")
+      .valueChanges();
 
     combineLatest(fetchContacts, this.searchInput$).subscribe(
-      ([fetchContacts, input]) => {
+      ([_fetchContacts, input]) => {
         this.contacts = [
-          fetchContacts.find((el: any) => {
+          _fetchContacts.find((el: any) => {
             let input_lowercase = input.toLowerCase();
             return el.displayName.toLowerCase().includes(input_lowercase);
           })

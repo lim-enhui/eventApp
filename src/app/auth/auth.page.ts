@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 import { Observable } from "rxjs";
 
 import { Platform } from "@ionic/angular";
@@ -11,18 +11,16 @@ import { Router } from "@angular/router";
   templateUrl: "./auth.page.html",
   styleUrls: ["./auth.page.scss"]
 })
-export class AuthPage implements OnInit {
-  user: Observable<firebase.User>;
-  isLogin = true;
-  isLoading = false;
+export class AuthPage {
+  public user: Observable<firebase.User>;
+  public isLogin: boolean = true;
+  public isLoading: boolean = false;
 
   constructor(
     private platform: Platform,
     private router: Router,
     private authService: AuthService
   ) {}
-
-  ngOnInit() {}
 
   authenticate(email: string, password: string) {
     let authObs: Observable<object>;
@@ -34,7 +32,7 @@ export class AuthPage implements OnInit {
     }
 
     authObs.subscribe(
-      res => {
+      () => {
         this.router.navigateByUrl("/tabs/home");
       },
       err => {

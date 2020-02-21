@@ -10,6 +10,7 @@ import * as firebase from "firebase";
 import { IUser } from "../model/user.interface";
 import { NavController } from "@ionic/angular";
 import * as fromAppActions from "../store/app.actions";
+import { IChat } from "../model/message.interface";
 
 @Component({
   selector: "app-message",
@@ -17,7 +18,7 @@ import * as fromAppActions from "../store/app.actions";
   styleUrls: ["./message.page.scss"]
 })
 export class MessagePage implements OnInit, AfterViewInit {
-  public messages: Array<any>;
+  public messages: Array<IChat>;
   public editorMsg: string;
   public messageId: string;
   public userId: string;
@@ -94,7 +95,7 @@ export class MessagePage implements OnInit, AfterViewInit {
               messages: firebase.firestore.FieldValue.arrayUnion(this.messageId)
             });
           } else {
-            this.afs.doc(`users/${this.userId}/private/inbox`).set({
+            this.afs.doc(`users/${this.recipient.uid}/private/inbox`).set({
               messages: [this.messageId]
             });
           }

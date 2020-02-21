@@ -24,13 +24,13 @@
             style="align-items: center; display: flex; justify-content: center;"
           >
             <img
-              *ngIf="user?.photoUrl === null"
+              *ngIf="eventUser?.photoUrl === null"
               src="assets/img/default_profile.jpg"
               style="width: 70%; height: 70%;"
             />
             <img
-              *ngIf="!(user?.photoUrl === null)"
-              [src]="user?.photoUrl"
+              *ngIf="!(eventUser?.photoUrl === null)"
+              [src]="eventUser?.photoUrl"
               style="width: 70%; height: 70%;"
             />
           </ion-avatar>
@@ -38,7 +38,7 @@
         <ion-col size="7" pull="1" style="margin: auto;">
           <ion-label>
             <h6>CREATOR</h6>
-            <p>{{ user?.displayName }}</p>
+            <p>{{ eventUser?.displayName }}</p>
           </ion-label>
         </ion-col>
       </ion-row>
@@ -204,7 +204,7 @@
               <ion-icon
                 slot="icon-only"
                 name="mail"
-                *ngIf="!(user?.email === null)"
+                *ngIf="!(eventUser?.email === null)"
                 size="large"
                 (click)="onClick('email')"
                 style="margin: 8px 0px;"
@@ -213,13 +213,13 @@
               <ion-icon
                 slot="icon-only"
                 name="remove-circle"
-                *ngIf="(user?.email === null)"
+                *ngIf="(eventUser?.email === null)"
                 size="large"
                 style="margin: 8px 0px;"
                 class="default-icon-color"
               ></ion-icon>
-              <ion-label *ngIf="!(user?.email === null)">Email</ion-label>
-              <ion-label *ngIf="(user?.email === null)"
+              <ion-label *ngIf="!(eventUser?.email === null)">Email</ion-label>
+              <ion-label *ngIf="(eventUser?.email === null)"
                 >Email Disabled</ion-label
               >
             </div></ion-col
@@ -231,7 +231,7 @@
               <ion-icon
                 slot="icon-only"
                 name="call"
-                *ngIf="!(user?.phoneNumber === null)"
+                *ngIf="!(eventUser?.phoneNumber === null)"
                 size="large"
                 (click)="onClick('call')"
                 style="margin: 8px 0px;"
@@ -240,13 +240,15 @@
               <ion-icon
                 slot="icon-only"
                 name="remove-circle"
-                *ngIf="(user?.phoneNumber === null)"
+                *ngIf="(eventUser?.phoneNumber === null)"
                 size="large"
                 style="margin: 8px 0px;"
                 class="default-icon-color"
               ></ion-icon>
-              <ion-label *ngIf="!(user?.phoneNumber === null)">Call</ion-label>
-              <ion-label *ngIf="user?.phoneNumber === null"
+              <ion-label *ngIf="!(eventUser?.phoneNumber === null)"
+                >Call</ion-label
+              >
+              <ion-label *ngIf="eventUser?.phoneNumber === null"
                 >Call Disabled</ion-label
               >
             </div>

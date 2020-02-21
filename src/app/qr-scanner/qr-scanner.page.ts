@@ -1,6 +1,10 @@
 import { Component, OnInit } from "@angular/core";
-import { ActionSheetController, Platform } from "@ionic/angular";
-import { AngularFireStorage } from "@angular/fire/storage";
+import {
+  ActionSheetController,
+  Platform,
+  ModalController,
+  NavController
+} from "@ionic/angular";
 
 import { QRScanner, QRScannerStatus } from "@ionic-native/qr-scanner/ngx";
 import {
@@ -20,6 +24,7 @@ import * as firebase from "firebase";
 
 import { Store, select } from "@ngrx/store";
 import * as fromAppReducer from "../store/app.reducer";
+import { UserCardPage } from "../user-card/user-card.page";
 
 @Component({
   selector: "app-qr-scanner",
@@ -28,7 +33,7 @@ import * as fromAppReducer from "../store/app.reducer";
 })
 export class QrScannerPage implements OnInit {
   public isQRScanning: boolean = false;
-  public scannedData: any = {};
+  public scannedData: any;
   public isLoading: boolean;
   public userId: string;
 
@@ -39,15 +44,16 @@ export class QrScannerPage implements OnInit {
   constructor(
     public platform: Platform,
     private qrScanner: QRScanner,
-    private storage: AngularFireStorage,
     public actionSheetController: ActionSheetController,
     private nativeHelpersService: NativeHelpersService,
     private store: Store<fromAppReducer.AppState>,
     private router: Router,
+    private navCtrl: NavController,
     private afs: AngularFirestore,
     private fileOpener: FileOpener,
     private transfer: FileTransfer,
-    private file: File
+    private file: File,
+    public modalController: ModalController
   ) {}
 
   showCamera() {
@@ -130,14 +136,34 @@ export class QrScannerPage implements OnInit {
   }
 
   public openContactCard(item) {
-    alert("Contact");
+    // alert("Contact");
     console.log(item);
-    this.router.navigate(["/user-card/" + item.id]);
+    // this.router.navigate(["/user-card/" + item.id]);
+    this.presentModal(item).then((modaldata: any) => {
+      if (modaldata.data.boolNavigateToMessage) {
+        this.navigateTo(modaldata.data.url);
+      } else {
+        this.presentProcessNextActionSheet(item);
+      }
+    });
+  }
+
+  async presentModal(item) {
+    const modal = await this.modalController.create({
+      component: UserCardPage,
+      componentProps: {
+        item: {
+          id: item.id
+        }
+      }
+    });
+    await modal.present();
+    return await modal.onWillDismiss();
   }
 
   async presentProcessNextActionSheet(item) {
     const actionSheet = await this.actionSheetController.create({
-      header: "Item Collection",
+      header: "Collection",
       backdropDismiss: false,
       buttons: [
         {
@@ -215,7 +241,7 @@ export class QrScannerPage implements OnInit {
 
   async presentScanAgainActionSheet() {
     const actionSheet = await this.actionSheetController.create({
-      header: "Item Collection",
+      header: "Collection",
       backdropDismiss: false,
       buttons: [
         {
@@ -307,9 +333,7 @@ export class QrScannerPage implements OnInit {
     console.log("ionViewDidLeave");
   }
 
-  navigateTo(page) {
-    const url = "/" + page;
-    console.log(url);
-    this.router.navigate([url]);
+  navigateTo(url) {
+    this.navCtrl.navigateForward("/" + url);
   }
 }

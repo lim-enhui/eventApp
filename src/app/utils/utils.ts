@@ -42,4 +42,12 @@ export function distanceInKmBetweenEarthCoordinates(lat1, lon1, lat2, lon2) {
   return earthRadiusKm * c;
 }
 
+export function isYoutubeLink(url): { stat?: boolean; id?: string } {
+  var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
+  var match = url.match(regExp);
+  return match && match[7].length == 11
+    ? { stat: true, id: match[7] }
+    : { stat: false };
+}
+
 export { messagesJoin, itemsJoin };

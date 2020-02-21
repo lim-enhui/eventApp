@@ -15,6 +15,7 @@ import { switchMap } from "rxjs/operators";
 import { environment } from "../../environments/environment";
 import { eventsJoin } from "../utils/join.utils";
 import { IEvent } from "../model/event.interface";
+import * as firebase from "firebase";
 
 @Component({
   selector: "app-user",
@@ -123,5 +124,13 @@ export class UserPage implements OnInit {
   navigateTo(page) {
     const url = "/" + page;
     this.router.navigate([url]);
+  }
+
+  delete(event) {
+    console.log(event);
+    this.afs.doc(`users/${this.userId}/private/events`).update({
+      createdevents: firebase.firestore.FieldValue.arrayRemove(event.id)
+    });
+    this.afs.doc(`events/${event.id}`).delete();
   }
 }

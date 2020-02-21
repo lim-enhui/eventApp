@@ -4,6 +4,7 @@ import { Store, select } from "@ngrx/store";
 import * as fromAppReducer from "../store/app.reducer";
 import * as fromAppActions from "../store/app.actions";
 import { Observable } from "rxjs";
+import { IGeoLocation } from "../store/geolocation.model";
 
 @Component({
   selector: "app-teleport",
@@ -11,12 +12,11 @@ import { Observable } from "rxjs";
   styleUrls: ["./teleport.page.scss"]
 })
 export class TeleportPage implements OnInit {
-  title: string = "My first AGM project";
   latitude: number;
   longitude: number;
   zoom: number = 18;
 
-  public geolocation$: Observable<any>;
+  public geolocation$: Observable<IGeoLocation>;
 
   constructor(private store: Store<fromAppReducer.AppState>) {}
 

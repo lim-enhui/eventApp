@@ -316,7 +316,7 @@ export class CreateNewEventPage implements OnInit {
     this.eventmode = event.detail.value;
   }
 
-  blurPostalHandler(event) {
+  postalHandler(event) {
     let responseFromOneMap: any;
     if (+event.srcElement.value && event.srcElement.value.length === 6) {
       this.http

@@ -47,7 +47,7 @@ export class AppComponent implements OnInit {
     this.store.dispatch(fromAppActions.loadGeoLocation());
     this.store.dispatch(fromAppActions.loadEvents());
 
-    if (this.platform.is("android")) {
+    if (this.platform.is("capacitor")) {
       // Register with Apple / Google to receive push via APNS/FCM
       PushNotifications.register();
 

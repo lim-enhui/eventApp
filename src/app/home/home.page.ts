@@ -63,7 +63,7 @@ export class HomePage implements OnInit {
         this.allEvents = events.filter(element => {
           return (
             moment(element.eventstartdate).format("DD MMM YYYY") >=
-            moment().format("DD MMM YYYY")
+              moment().format("DD MMM YYYY") || element.eventmode === "weekly"
           );
         });
 
@@ -148,10 +148,6 @@ export class HomePage implements OnInit {
         );
       });
     }
-  }
-
-  navigatePush(page) {
-    this.navController.navigateForward("/" + page);
   }
 
   navigateTo(page, params = {}) {

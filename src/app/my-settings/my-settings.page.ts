@@ -19,12 +19,12 @@ import { FcmService } from "../shared/fcm.service";
   styleUrls: ["./my-settings.page.scss"]
 })
 export class MySettingsPage implements OnInit {
-  private userId;
+  private userId: string;
   private userDoc: AngularFirestoreDocument<IUser>;
   private searchUserDoc: AngularFirestoreDocument<any>;
   public userImage: string;
   public userDisplayName: string;
-  public userPhoneNumber: number | string;
+  public userPhoneNumber: string;
   public userEmail: string;
   public userIsSearchable: boolean = false;
   public userOccupation: string;
@@ -102,7 +102,7 @@ export class MySettingsPage implements OnInit {
             phoneNumber === "null" ||
             phoneNumber === ""
               ? ""
-              : phoneNumber;
+              : phoneNumber.toString();
           this.userEmail =
             email === null ||
             email === undefined ||

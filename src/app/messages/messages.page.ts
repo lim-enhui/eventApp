@@ -5,7 +5,6 @@ import { Store, select } from "@ngrx/store";
 import * as fromAppReducer from "../store/app.reducer";
 import * as fromAppActions from "../store/app.actions";
 
-// import { messagesJoin } from "../utils/join.utils";
 import { Router } from "@angular/router";
 import { IMessage } from "../model/message.interface";
 import * as firebase from "firebase";
@@ -16,8 +15,9 @@ import * as firebase from "firebase";
   styleUrls: ["./messages.page.scss"]
 })
 export class MessagesPage implements OnInit {
-  public messages = [];
+  public messages: Array<IMessage>;
   public userId: string;
+  public defaultImage: string = "assets/img/default_profile.jpg";
 
   constructor(
     private store: Store<fromAppReducer.AppState>,
@@ -48,7 +48,7 @@ export class MessagesPage implements OnInit {
     this.router.navigate(["/message/" + id]);
   }
 
-  deleteMessage(id) {
+  deleteMessage(id, bool: boolean = false) {
     console.log(id);
     this.afs
       .doc(`users/${this.userId}/private/inbox`)
@@ -56,11 +56,17 @@ export class MessagesPage implements OnInit {
         messages: firebase.firestore.FieldValue.arrayRemove(id)
       })
       .then(() => {
+        if (bool) {
+          // if it is true, it implies message is empty.
+          // safe to delete
+          this.afs.doc(`message/${id}`).delete();
+        }
         this.store.dispatch(fromAppActions.loadMessages());
       });
   }
 
   navigateTo(url) {
+    console.log("navigate forward");
     this.navCtrl.navigateForward("/" + url);
   }
 }

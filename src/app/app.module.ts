@@ -42,6 +42,7 @@ import { AppEffect } from "./store/app.effects";
 
 import { QrCodePage } from "./qr-code/qr-code.page";
 import { QRCodeModule } from "angularx-qrcode";
+import { UserCardPage } from "./user-card/user-card.page";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDX878vWfnXaGwPKAM_WJ_BgWnwhIv3v20",
@@ -53,8 +54,8 @@ const firebaseConfig = {
 };
 
 @NgModule({
-  declarations: [AppComponent, QrCodePage],
-  entryComponents: [QrCodePage],
+  declarations: [AppComponent, QrCodePage, UserCardPage],
+  entryComponents: [QrCodePage, UserCardPage],
   imports: [
     BrowserModule,
     StoreModule.forRoot({ app: fromAppReducer.appReducer }),

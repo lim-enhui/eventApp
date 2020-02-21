@@ -10,6 +10,7 @@ import {
 } from "@ionic-native/file-transfer/ngx";
 import { File } from "@ionic-native/file/ngx";
 import { YoutubeVideoPlayer } from "@ionic-native/youtube-video-player/ngx";
+import { CallNumber } from "@ionic-native/call-number/ngx";
 
 @Injectable({
   providedIn: "root"
@@ -27,8 +28,13 @@ export class NativeHelpersService {
     private youtube: YoutubeVideoPlayer,
     private storage: AngularFireStorage,
     private transfer: FileTransfer,
-    private file: File
+    private file: File,
+    private callNumber: CallNumber
   ) {}
+
+  async callContact(contactNumber) {
+    return this.callNumber.callNumber(contactNumber, true);
+  }
 
   async openCamera(): Promise<{
     selectedImageFile?: string;

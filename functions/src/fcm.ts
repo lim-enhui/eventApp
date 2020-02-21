@@ -23,8 +23,8 @@ export const sendOnFirestoreCreate = functions.firestore
     const event: any = snapshot.data();
 
     const notification: admin.messaging.Notification = {
-      title: "New Event Published",
-      body: event.eventname
+      title: `New Event ${event.eventname} Published`,
+      body: event.eventaddress
     };
 
     const payload: admin.messaging.Message = {

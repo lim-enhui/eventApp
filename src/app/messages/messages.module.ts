@@ -6,8 +6,7 @@ import { Routes, RouterModule } from "@angular/router";
 import { IonicModule } from "@ionic/angular";
 
 import { MessagesPage } from "./messages.page";
-import { getRecipientNamePipe } from "./recipients-name.pipe";
-import { getRecipientPhotoPipe } from "./recipients-photo.pipe";
+import { getRecipientPipe } from "./recipient.pipe";
 
 const routes: Routes = [
   {
@@ -23,6 +22,6 @@ const routes: Routes = [
     IonicModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [MessagesPage, getRecipientNamePipe, getRecipientPhotoPipe]
+  declarations: [MessagesPage, getRecipientPipe]
 })
 export class MessagesPageModule {}
