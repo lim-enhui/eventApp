@@ -30,8 +30,7 @@ export class HomePage implements OnInit {
   constructor(
     public menuController: MenuController,
     private router: Router,
-    private store: Store<fromAppReducer.AppState>,
-    private navController: NavController
+    private store: Store<fromAppReducer.AppState>
   ) {}
 
   ngOnInit() {
@@ -62,16 +61,25 @@ export class HomePage implements OnInit {
         console.log(events);
         this.allEvents = events.filter(element => {
           return (
-            moment(element.eventstartdate).format("DD MMM YYYY") >=
-              moment().format("DD MMM YYYY") || element.eventmode === "weekly"
+            moment(element.eventstartdate).isSame(
+              moment().format("DD MMM YYYY")
+            ) ||
+            moment(element.eventstartdate).isAfter(
+              moment().format("DD MMM YYYY")
+            ) ||
+            element.eventmode === "weekly"
           );
         });
 
         this.events = events.filter(element => {
           return (
             +element.distance < +this.distance &&
-            moment(element.eventstartdate).format("DD MMM YYYY") >=
+            (moment(element.eventstartdate).isSame(
               moment().format("DD MMM YYYY")
+            ) ||
+              moment(element.eventstartdate).isAfter(
+                moment().format("DD MMM YYYY")
+              ))
           );
         });
       });
@@ -94,7 +102,12 @@ export class HomePage implements OnInit {
     this.events = this.allEvents.filter(element => {
       return (
         +element.distance < +this.distance &&
-        Date.parse(element.eventstartdate) >= Date.now()
+        (moment(element.eventstartdate).isSame(
+          moment().format("DD MMM YYYY")
+        ) ||
+          moment(element.eventstartdate).isAfter(
+            moment().format("DD MMM YYYY")
+          ))
       );
     });
   }

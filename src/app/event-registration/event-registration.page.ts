@@ -19,8 +19,8 @@ import { NativeHelpersService } from "../shared/native-helpers.service";
   providers: []
 })
 export class EventRegistrationPage implements OnInit {
-  // public latitude: number;
-  // public longitude: number;
+  public latitude: number;
+  public longitude: number;
   public event: IEvent;
   public eventUser: IUser;
   public userId: string;
@@ -45,8 +45,8 @@ export class EventRegistrationPage implements OnInit {
       .pipe(
         mergeMap((route: any) => {
           this.event = Object.assign({}, route.params);
-          // this.latitude = +route.params.eventlat;
-          // this.longitude = +route.params.eventlng;
+          this.latitude = +route.params.eventlat;
+          this.longitude = +route.params.eventlng;
 
           return this.afs.doc(`users/${route.params.creator}`).valueChanges();
         })

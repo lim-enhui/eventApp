@@ -1,0 +1,1 @@
+//# sourceMappingURL=event.interface.js.map
