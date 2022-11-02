@@ -50,7 +50,7 @@
     "@types/lodash": "^4.14.149",
     "angularx-qrcode": "^1.6.4",
     "call-number": "^1.0.1",
-    "cordova-android": "7.1.4",
+    "cordova-android": "11.0.0",
     "cordova-ios": "5.0.1",
     "cordova-plugin-add-swift-support": "^2.0.2",
     "cordova-plugin-camera": "^4.1.0",
